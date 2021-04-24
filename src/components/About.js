@@ -54,7 +54,7 @@ const Container = styled.section`
 
     @media (max-width:1000px){
         grid-template-columns:2fr 1fr;
-        padding:0px 80px;
+        padding:0px 70px;
 
     }
 
@@ -106,7 +106,11 @@ const InfoContainer = styled.div`
     }
     p{
         margin-bottom:20px;
-        font-size:15px;
+        font-size:20px;
+
+        @media (max-width:600px){
+            font-size:15px;
+        }
     }
 ` 
 
