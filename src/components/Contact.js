@@ -38,11 +38,18 @@ const Container = styled.div`
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding:100px 180px;
+    padding:100px 100px;
     margin:0px 200px;
-    & > *{
-        margin-top:50px;
+
+    @media (max-width:1180px){
+        padding:50px;
+        margin:0;
     }
+    & > *{
+        margin:20px 0px;
+    }
+
+
 `
 
 const HeaderContainer = styled.div`

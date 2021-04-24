@@ -4,6 +4,7 @@ import {Button} from './styled/defaultStyledComponents'
 import {GiHamburgerMenu} from 'react-icons/gi'
 import {Link, animateScroll as scroll} from 'react-scroll'
 import {ImCross} from 'react-icons/im'
+import Pdf from '../pdf/curriculum.pdf'
 
 const Header = () => {
     const [displayMenu,setDisplayMenu] = useState(false);
@@ -70,9 +71,12 @@ const Header = () => {
 
                 </NavItemsUl>
                 <NavResume>
-                    <Button padding = "10px">
-                        Resume
-                    </Button>
+                    <a href={Pdf} target="_blank">
+                        <Button padding = "10px">
+                            Resume
+                        </Button>
+                    </a>
+
                 </NavResume>
             </NavLinksWrapper>
             <BurgerWrapper onClick={() => setDisplayMenu(!displayMenu)}>

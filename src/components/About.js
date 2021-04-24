@@ -14,10 +14,10 @@ const About = () => {
             </ImageContainer>
             <InfoContainer>
                 <p>
-                Hello! My name is Brittany and I enjoy creating things that live on the internet. My interest in web development started back in 2012 when I decided to try editing custom Tumblr themes — turns out hacking together a custom reblog button taught me a lot about HTML & CSS!
+                    Hola! Mi nombre es Diego y estoy incursionando en el mundo de la programación web. Empecé en este mundo cuando tenía 10 años intentando hacer animaciones con flash usando ActionScript y usando RPG Maker. Hace 3 años retomé haciendo cursos por internet de C# y el curso de ITMaster de Java.
                 </p>
                 <p>
-                Fast-forward to today, and I've had the privilege of working at an advertising agency, a start-up, a huge corporation, and a student-led design studio. My main focus these days is building accessible, inclusive products and digital experiences at Upstatement for a variety of clients.
+                    A fines del 2020 me empezó a interesar el desarrollo web y es por eso que hice un curso en Coderhouse de HTML/CSS para luego seguir aprendendiendo de forma autodidacta Javascript y React.
                 </p>
             </InfoContainer>
             <TechnologiesContainer>
@@ -55,6 +55,7 @@ const Container = styled.section`
     @media (max-width:1000px){
         grid-template-columns:2fr 1fr;
         padding:0px 80px;
+
     }
 `
 
@@ -186,7 +187,7 @@ const ImageContainer = styled.div`
     @media (max-width:1000px){
         grid-row:3;
         grid-column:1 / span 3;
-        margin:auto;
+        margin:50px auto;
     }
 
     img{
@@ -205,7 +206,7 @@ const ImageContainer = styled.div`
         border:2px solid var(--orange);
         border-radius:5px;
         height:90%;
-        width:90%;
+        width:75%;
         position:absolute;
         left:10%;
         bottom:18%;
