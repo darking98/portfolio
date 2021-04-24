@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import {Button} from './styled/defaultStyledComponents'
+import {Link, animateScroll as scroll} from 'react-scroll'
 
 const Home = () => {
     return (
@@ -18,9 +19,18 @@ const Home = () => {
                     aprendizaje y crecimiento
                     profesional.
                 </p>
-            <Button padding="15px 30px">
-                Hablemos!
-            </Button>
+            <Link
+                to="contact"
+                spy={true}
+                smooth={true}
+                offset={-100}
+                duration={500}
+            >
+                <Button padding="15px 30px">
+                    Hablemos!
+                </Button>
+            </Link>
+            
             </InfoContainer>
 
         </Container>    
