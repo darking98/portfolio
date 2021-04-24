@@ -55,6 +55,13 @@ const HeaderContainer = styled.div`
     display:flex;
     justify-content:center;
     flex-direction:column;
+
+    @media (max-width:600px){
+        >*{
+            margin-bottom:20px;
+        }
+
+    }
     h1{
         letter-spacing:1px;
         margin-bottom:15px;
