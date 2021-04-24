@@ -2,7 +2,8 @@ import React,{useState} from 'react'
 import styled from 'styled-components'
 import {Button} from './styled/defaultStyledComponents'
 import {GiHamburgerMenu} from 'react-icons/gi'
-
+import {Link, animateScroll as scroll} from 'react-scroll'
+import {ImCross} from 'react-icons/im'
 
 const Header = () => {
     const [displayMenu,setDisplayMenu] = useState(false);
@@ -13,12 +14,60 @@ const Header = () => {
             <LogoWrapper>
                 <span>Diego Rodriguez</span>
             </LogoWrapper>
-            <NavLinksWrapper>
-                <NavItemsUl>
-                    <NavItems><a href="#" >Home</a></NavItems>
-                    <NavItems><a href="#" >About</a></NavItems>
-                    <NavItems><a href="#" >Projects</a></NavItems>
-                    <NavItems><a href="#contact" >Contact</a></NavItems>
+            <NavLinksWrapper className={displayMenu ? "menu-active" : ""}>
+                <NavItemsUl onClick = {() => displayMenu ? setDisplayMenu(false) : ""}>
+                    <NavItems >
+                        <Link
+                            to="home"
+                            spy={true}
+                            smooth={true}
+                            offset={-100}
+                            duration={500}
+                            onClick = {() => displayMenu ? setDisplayMenu(false) : ""}
+                        >                       
+                            Home
+                        </Link>
+                    </NavItems>
+
+                    <NavItems>
+                        <Link
+                            to="about"
+                            spy={true}
+                            smooth={true}
+                            offset={-100}
+                            duration={500}
+                            onClick = {() => displayMenu ? setDisplayMenu(false) : ""}
+                        >  
+                            About
+                        </Link>
+                    </NavItems>
+
+                    <NavItems>
+                        <Link
+                            to="projects"
+                            spy={true}
+                            smooth={true}
+                            offset={-100}
+                            duration={500}
+                            onClick = {() => displayMenu ? setDisplayMenu(false) : ""}
+                        >  
+                            Projects
+                        </Link>
+                    </NavItems>
+
+                    <NavItems>
+                        <Link
+                            to="contact"
+                            spy={true}
+                            smooth={true}
+                            offset={-100}
+                            duration={500}
+                            onClick = {() => displayMenu ? setDisplayMenu(false) : ""}
+                        >  
+                            Contact
+                        </Link>
+                    </NavItems>
+
                 </NavItemsUl>
                 <NavResume>
                     <Button padding = "10px">
@@ -26,8 +75,12 @@ const Header = () => {
                     </Button>
                 </NavResume>
             </NavLinksWrapper>
-            <BurgerWrapper>
-                <GiHamburgerMenu/>
+            <BurgerWrapper onClick={() => setDisplayMenu(!displayMenu)}>
+                {displayMenu ? 
+                    <ImCross/>
+                 : 
+                    <GiHamburgerMenu/>
+                }
             </BurgerWrapper>
         </Navbar>
     )
@@ -47,7 +100,6 @@ const Navbar = styled.nav`
     font-family:"SF Mono";
     box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
     z-index:999;
-
     @media (max-width:1000px){
 
     }
@@ -60,17 +112,18 @@ const NavLinksWrapper = styled.div`
     display:flex;
     justify-content:center;
     align-items:center;
+    transition:all 300ms ease-in-out;
 
     @media (max-width:1000px){
         position:absolute;
         top:100%;
-        right:100%;
+        right:-100%;
         flex-direction:column;
         justify-content:center;
         height:100vh;
         width:50%;
-        
         background-color: var(--lightest-black);
+
     }
     
 `
@@ -82,6 +135,7 @@ const NavItemsUl = styled.ul`
     @media (max-width:1000px){
         flex-direction:column;
         justify-content:center;
+
     }
 
     li:first-child{
@@ -140,6 +194,7 @@ const NavItems = styled.li`
         color:var(--white);
         text-decoration:none;
         transition:all 300ms ease;
+        cursor:pointer;
     }
 `
 

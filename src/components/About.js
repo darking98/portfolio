@@ -5,7 +5,7 @@ import image from '../images/cv-image.jpg'
 
 const About = () => {
     return (
-        <Container>
+        <Container id="about">
             <HeaderContainer>
                 <h2>About Me</h2>
             </HeaderContainer>
@@ -51,10 +51,19 @@ const Container = styled.section`
     grid-template-columns:1fr 3fr 2fr 1fr;
     gap:20px 10px;
     grid-template-rows:fit-content(80px);
+
+    @media (max-width:1000px){
+        grid-template-columns:2fr 1fr;
+        padding:0px 80px;
+    }
 `
 
 const HeaderContainer = styled.div`
     grid-column:2 / span 4;
+
+    @media (max-width:1000px){
+        grid-column:1 /span 2;
+    }
     h2{
         color:var(--white);
         font-size:30px;
@@ -70,6 +79,10 @@ const HeaderContainer = styled.div`
             left:150px;
             top:40%;            
             color:white;
+
+            @media (max-width:1000px){
+                width:60%;
+            }
         }
     }
 `
@@ -82,6 +95,10 @@ const InfoContainer = styled.div`
     font-size:18px;
     color:var(--lightest-gray);
 
+    @media (max-width:1000px){
+        grid-column:1 / span 3;
+        grid-row:2;
+    }
     p{
         margin-bottom:20px;
     }
@@ -96,6 +113,10 @@ const TechnologiesContainer = styled.div`
     margin-top:50px;
 
     
+    @media (max-width:1000px){
+        grid-column:1 / span 3;
+        grid-row:4;
+    }
     
 `
 
@@ -109,12 +130,17 @@ const IconsWrapper = styled.span`
         font-weight:500;
         background-color: var(--lightest-black);
         height:100px;
+        right:0;
         width:100px;
         display:flex;
         justify-content:center;
         align-items:center;
         border-radius:50px;
-
+        z-index:10; 
+        @media (max-width:600px){
+            top:90%;
+            left:-10px;
+        }
     }
     :after{
         position:absolute;
@@ -123,7 +149,12 @@ const IconsWrapper = styled.span`
         border-style: solid;
         border-width: 25px 12.5px 0 12.5px;
         border-color: var(--lightest-black) transparent transparent transparent;
-        transform:rotate(180deg);        
+        transform:rotate(180deg);     
+        
+        @media (max-width:600px){
+            top:70%;
+            left:35%;
+        }
     }
 
 
@@ -152,13 +183,19 @@ const ImageContainer = styled.div`
     display:flex;
     position:relative;
 
+    @media (max-width:1000px){
+        grid-row:3;
+        grid-column:1 / span 3;
+        margin:auto;
+    }
+
     img{
         z-index:20;
         position:relative;
         border-radius:5px;
-        /*filter: sepia(68%) saturate(324%) hue-rotate(333deg) brightness(94%) contrast(93%);*/
         filter:grayscale(100%);
         transition:300ms ease-in-out;
+        width:300px;
         :hover{
             filter:none;
         }
@@ -168,11 +205,15 @@ const ImageContainer = styled.div`
         border:2px solid var(--orange);
         border-radius:5px;
         height:90%;
-        width:100%;
+        width:90%;
         position:absolute;
         left:10%;
         bottom:18%;
-        transition:all 200ms ease-in
+        transition:all 200ms ease-in;
+
+        @media (max-width:1180px){
+            width:100%;
+        }
     }
 
     :hover:after{
@@ -186,6 +227,7 @@ const TechnologiesHeader = styled.div`
     justify-content:center;
     font-family:"SF Mono";
     margin-bottom:50px;
+
 
     h3{
         position:relative;
@@ -205,6 +247,13 @@ const TechnologiesHeader = styled.div`
 
 const TechnologiesIcons = styled.div`
     display:flex;
-    justify-content:space-around;
+    justify-content:space-between;
+    flex-wrap:wrap;
+
+    svg{
+        @media (max-width:600px){
+            margin:20px 20px;
+        }
+    }
 
 `

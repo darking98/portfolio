@@ -8,7 +8,7 @@ import {BiLinkExternal} from 'react-icons/bi'
 
 const Projects = () => {
     return (
-        <Container>
+        <Container id="projects">
             <HeaderContainer>
                 <h2>Mis proyectos</h2>
             </HeaderContainer>
@@ -86,6 +86,10 @@ const HeaderContainer = styled.div`
             left:200px;
             top:40%;            
             color:white;
+
+            @media (max-width:1180px){
+                width:40%;
+            }
         }
     }
 `
@@ -97,11 +101,25 @@ const ProjectsWrapper = styled.div`
     width:100%;
     justify-content:space-between;
     grid-column:2 /span 2;
+
+    @media (max-width:1180px){
+        display:flex;
+        flex-direction:column;
+
+    }
+
 `
 const ImageWrapper = styled.div`
+    @media (max-width:1180px){
+        align-self:center;
+    }
     img{
         filter:grayscale(100%);
         transition:300ms ease-in-out;
+
+        @media (max-width:1180px){
+            width:400px;
+        }
         :hover{
             filter:none;
         }
@@ -114,6 +132,10 @@ const InfoWrapper = styled.div`
     flex-direction:column;
     align-items:flex-end;
     justify-content:space-between;
+
+    @media (max-width:1180px){
+        align-items:flex-start;
+    }
 `
 
 const HeaderInfo = styled.div`
@@ -151,7 +173,7 @@ const TechnologiesUsed = styled.div`
     display:flex;
     justify-content:space-around;
     font-family:"SF Mono";
-
+    padding-top:20px;
     h4{
         font-weight:100;
         font-size:12px;
@@ -164,6 +186,10 @@ const IconsLink = styled.div`
     width:100%;
     display:flex;
     justify-content:flex-end;
+    padding-top:20px;
+    @media (max-width:1180px){
+        justify-content:flex-start;
+    }
     a{
         color:var(--white);
         text-decoration:none;

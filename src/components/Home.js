@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import {Button, Algo} from './styled/defaultStyledComponents'
+import {Button} from './styled/defaultStyledComponents'
 
 const Home = () => {
     return (
-        <Container>
+        <Container id="home">
             <HeaderContainer>
                 <h1>Hola, mi nombre es</h1>
                 <h2>Diego Rodriguez</h2>
@@ -53,6 +53,10 @@ const HeaderContainer = styled.div`
     h2,h3{
         font-weight:600;
         font-size:70px;
+
+        @media (max-width:700px){
+            font-size:50px;
+        }
     }
 
     h2{
@@ -68,12 +72,16 @@ const HeaderContainer = styled.div`
 
 const InfoContainer = styled.div`
     max-width:600px;
-    font-size:20px;
     color:var(--lightest-gray);
 
     p{
         margin-bottom:20px;
         line-height:25px;
+        font-size:20px;
+
+        @media(max-width:700px){
+            font-size:18px;
+        }
     }
 `
 
