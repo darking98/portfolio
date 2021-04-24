@@ -14,7 +14,7 @@ const About = () => {
             </ImageContainer>
             <InfoContainer>
                 <p>
-                    Hola! Mi nombre es Diego y estoy incursionando en el mundo de la programación web. Empecé en este mundo cuando tenía 10 años intentando hacer animaciones con flash usando ActionScript y usando RPG Maker. Hace 3 años retomé haciendo cursos por internet de C# y el curso de ITMaster de Java.
+                    Hola! Mi nombre es Diego y estoy incursionando en el mundo de la programación web. Empecé en el mundo de la programación cuando tenía 10 años intentando hacer animaciones con flash usando ActionScript y usando RPG Maker. Hace 3 años retomé haciendo cursos por internet de C# y el curso de ITMaster de Java.
                 </p>
                 <p>
                     A fines del 2020 me empezó a interesar el desarrollo web y es por eso que hice un curso en Coderhouse de HTML/CSS para luego seguir aprendendiendo de forma autodidacta Javascript y React.
