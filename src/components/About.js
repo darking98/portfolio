@@ -57,6 +57,10 @@ const Container = styled.section`
         padding:0px 80px;
 
     }
+
+    @media (max-width:600px){
+        padding:0px 30px;
+    }
 `
 
 const HeaderContainer = styled.div`
@@ -102,6 +106,7 @@ const InfoContainer = styled.div`
     }
     p{
         margin-bottom:20px;
+        font-size:15px;
     }
 ` 
 
@@ -197,6 +202,10 @@ const ImageContainer = styled.div`
         filter:grayscale(100%);
         transition:300ms ease-in-out;
         width:300px;
+
+        @media (max-width:600px){
+            width:150px;
+        }
         :hover{
             filter:none;
         }

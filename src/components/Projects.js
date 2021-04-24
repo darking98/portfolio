@@ -24,7 +24,7 @@ const Projects = () => {
                         <p>El típico juego Tic-Tac-Toe hecho en Javascript Vanilla para poner en práctica mis conocimientos de lógica y programación.</p>
                     </TextInfo>
                     <TechnologiesUsed>
-                        <h4>Javascript Vanilla</h4>
+                        <h4>Javascript</h4>
                         <h4>Scss/SASS</h4>
                         <h4>HTML</h4>
                     </TechnologiesUsed>
@@ -90,6 +90,10 @@ const HeaderContainer = styled.div`
             @media (max-width:1180px){
                 width:40%;
             }
+
+            @media (max-width:600px){
+                width:20%;
+            }
         }
     }
 `
@@ -118,7 +122,7 @@ const ImageWrapper = styled.div`
         transition:300ms ease-in-out;
 
         @media (max-width:1180px){
-            width:400px;
+            width:100%;
         }
         :hover{
             filter:none;
@@ -157,6 +161,9 @@ const TextInfo = styled.div`
         font-size:20px;
         color:var(--lightest-gray);
 
+        @media (max-width:600px){
+            font-size:15px;
+        }
         a{
             color:var(--orange);
             text-decoration:none;
@@ -174,11 +181,12 @@ const TechnologiesUsed = styled.div`
     justify-content:space-around;
     font-family:"SF Mono";
     padding-top:20px;
+    flex-wrap:wrap;
     h4{
         font-weight:100;
         font-size:12px;
         color:var(--white);
-
+        padding-top:20px;
     }
 `
 

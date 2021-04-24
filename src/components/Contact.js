@@ -63,6 +63,10 @@ const HeaderContainer = styled.div`
         letter-spacing:1px;
         position:relative;
         text-transform:capitalize;
+
+        @media (max-width:600px){
+            font-size:25px;
+        }
     }
 `
 
@@ -72,6 +76,10 @@ const TextContainer = styled.div`
         margin:auto;
         font-size:18px;
         color:var(--darkest-gray);
+
+        @media (max-width:600px){
+            font-size:15px;
+        }
     }
 `
 

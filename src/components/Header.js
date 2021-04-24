@@ -13,7 +13,7 @@ const Header = () => {
     return (
         <Navbar>
             <LogoWrapper>
-                <span>Diego Rodriguez</span>
+                <span>DR</span>
             </LogoWrapper>
             <NavLinksWrapper className={displayMenu ? "menu-active" : ""}>
                 <NavItemsUl onClick = {() => displayMenu ? setDisplayMenu(false) : ""}>
@@ -170,6 +170,11 @@ const NavItems = styled.li`
         font-size:30px;
         padding-bottom:50px;
     }
+
+    @media (max-width:600px){
+        font-size:20px;
+        padding-bottom:30px;
+    }
     :after{
         content: "";
         bottom: 0;
@@ -222,6 +227,10 @@ const BurgerWrapper = styled.div`
 
     @media (max-width: 1000px){
         display:block;
+    }
+
+    @media (max-width:600px){
+        font-size:20px;
     }
     :hover{
         color:var(--darkest-gray);

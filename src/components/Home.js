@@ -35,6 +35,10 @@ const Container = styled.div`
     flex-direction:column;
     background-color: var(--black);
 
+    @media (max-width:600px){
+        margin:0px 50px;
+    }
+
 `
 
 const HeaderContainer = styled.div`
@@ -55,7 +59,7 @@ const HeaderContainer = styled.div`
         font-size:70px;
 
         @media (max-width:700px){
-            font-size:50px;
+            font-size:25px;
         }
     }
 
@@ -80,7 +84,7 @@ const InfoContainer = styled.div`
         font-size:20px;
 
         @media(max-width:700px){
-            font-size:18px;
+            font-size:15px;
         }
     }
 `
