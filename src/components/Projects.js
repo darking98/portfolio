@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import ticTacToe from '../images/tic-tac-toe.png'
 import weather from '../images/api-weather-screen.jpg'
+import quiz from '../images/quiz-app.png'
 import {FiGithub} from 'react-icons/fi'
 import {BiLinkExternal} from 'react-icons/bi'
 
@@ -54,6 +55,28 @@ const Projects = () => {
                     <IconsLink>
                         <a href="https://github.com/darking98/weather-api" target="_blank"><FiGithub/></a>
                         
+                    </IconsLink>
+                </InfoWrapper>
+            </ProjectsWrapper>
+            <ProjectsWrapper>
+                <ImageWrapper>
+                    <a href="https://darking98.github.io/quiz-app//" target="_blank"><img src={quiz} alt="" width="500px"/></a>
+                </ImageWrapper>
+                <InfoWrapper>
+                    <HeaderInfo>
+                        <h3>Quiz App</h3>
+                    </HeaderInfo>
+                    <TextInfo>
+                        <p>Juego de preguntas y respuestas traidas de OpenTrivia API en donde el jugador puede seleccionar la categoria y la dificultad de las preguntas.</p>
+                    </TextInfo>
+                    <TechnologiesUsed>
+                        <h4>React Js</h4>
+                        <h4>Styled Components</h4>
+                        <h4>OpenTrivia Api</h4>
+                    </TechnologiesUsed>
+                    <IconsLink>
+                        <a href="https://github.com/darking98/quiz-app" target="_blank"><FiGithub/></a>
+                        <a href="https://darking98.github.io/quiz-app//" target="_blank"><BiLinkExternal/></a>
                     </IconsLink>
                 </InfoWrapper>
             </ProjectsWrapper>

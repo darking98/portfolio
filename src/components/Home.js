@@ -57,6 +57,7 @@ const HeaderContainer = styled.div`
     flex-direction:column;
 
     @media (max-width:600px){
+        
         >*{
             margin-bottom:20px;
         }
