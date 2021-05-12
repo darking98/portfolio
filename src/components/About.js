@@ -17,7 +17,7 @@ const About = () => {
                     Hola! Mi nombre es Diego y estoy incursionando en el mundo de la programación web. Empecé en el mundo de la programación cuando tenía 10 años intentando hacer animaciones con flash usando ActionScript y usando RPG Maker. Hace 3 años retomé haciendo cursos por internet de C# y el curso de ITMaster de Java.
                 </p>
                 <p>
-                    A fines del 2020 me empezó a interesar el desarrollo web y es por eso que hice un curso en Coderhouse de HTML/CSS para luego seguir aprendendiendo de forma autodidacta Javascript y React.
+                    A fines del 2020 me empezó a interesar el desarrollo web y es por eso que hice un curso en Coderhouse de HTML/CSS para luego seguir aprendiendo de forma autodidacta Javascript y React.
                 </p>
             </InfoContainer>
             <TechnologiesContainer>
@@ -86,7 +86,7 @@ const HeaderContainer = styled.div`
             color:white;
 
             @media (max-width:1000px){
-                width:60%;
+                width:40%;
             }
         }
     }
@@ -103,6 +103,7 @@ const InfoContainer = styled.div`
     @media (max-width:1000px){
         grid-column:1 / span 3;
         grid-row:2;
+        text-align:center;
     }
     p{
         margin-bottom:20px;

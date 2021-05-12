@@ -54,7 +54,7 @@ const Projects = () => {
                     </TechnologiesUsed>
                     <IconsLink>
                         <a href="https://github.com/darking98/weather-api" target="_blank"><FiGithub/></a>
-                        
+                        <a href="https://darking98.github.io/weather-api/" target="_blank"><BiLinkExternal/></a>
                     </IconsLink>
                 </InfoWrapper>
             </ProjectsWrapper>
