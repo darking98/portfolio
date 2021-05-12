@@ -13,11 +13,7 @@ const Home = () => {
             </HeaderContainer> 
             <InfoContainer>
                 <p>
-                    Soy un estudiante autodidacta de programación
-                    buscando mi primera experiencia
-                    laboral en sistemas con ansias de
-                    aprendizaje y crecimiento
-                    profesional.
+                    Soy un estudiante de programación autodidacta en busca de mi primer empleo en el rubro IT, enfocando mis ideas en soluciones prácticas para la vida moderna. Lo que no sé, lo aprendo.
                 </p>
             <Link
                 to="contact"
