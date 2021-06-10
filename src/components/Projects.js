@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import ticTacToe from '../images/tic-tac-toe.png'
 import weather from '../images/api-weather-screen.jpg'
 import quiz from '../images/quiz-app.png'
+import superheroe from '../images/superhero.png'
 import {FiGithub} from 'react-icons/fi'
 import {BiLinkExternal} from 'react-icons/bi'
 
@@ -13,6 +14,81 @@ const Projects = () => {
             <HeaderContainer>
                 <h2>Mis proyectos</h2>
             </HeaderContainer>
+            <ProjectsWrapper>
+                <ImageWrapper>
+                    <a href="https://darking98.github.io/alkemy-challenge/" target="_blank"><img src={superheroe} alt="" width="500px"/></a>
+                </ImageWrapper>
+                <InfoWrapper>
+                    <HeaderInfo>
+                        <h3>SuperHero Team</h3>
+                    </HeaderInfo>
+                    <TextInfo>
+                        <p>Este es un proyecto hecho para el challenge de <a href="https://www.alkemy.org/" target="_blank">Alkemy</a> en el que consiste crear un buscador de héroes haciendo peticiones a una <a href="https://superheroapi.com/" target="_blank">API</a> y poder selelccionarlos y agregarlos a tu equipo.
+                        <p>Email : challenge@alkemy.org</p>
+                        <p>Password : react</p>
+                        <span>Pssst... para poder tener una mejor experiencia de usuario, se recomienda activar CORS desde este <a href="https://cors-anywhere.herokuapp.com/" target="_blank">link.</a> </span>
+                         </p>
+                    </TextInfo>
+                    <TechnologiesUsed>
+                        <h4>React Js</h4>
+                        <h4>Styled Components</h4>
+                        <h4>SuperHeroe API</h4>
+                        <h4>React Router</h4>
+                    </TechnologiesUsed>
+                    <IconsLink>
+                        <a href="https://github.com/darking98/alkemy-challenge" target="_blank"><FiGithub/></a>
+                        <a href="https://darking98.github.io/alkemy-challenge/" target="_blank"><BiLinkExternal/></a>
+                    </IconsLink>
+                </InfoWrapper>
+            </ProjectsWrapper>
+            <ProjectsWrapper>
+                <ImageWrapper>
+                    <a href="https://darking98.github.io/quiz-app//" target="_blank"><img src={quiz} alt="" width="500px"/></a>
+                </ImageWrapper>
+                <InfoWrapper>
+                    <HeaderInfo>
+                        <h3>Quiz App</h3>
+                    </HeaderInfo>
+                    <TextInfo>
+                        <p>Juego de preguntas y respuestas traidas de <a href="https://opentdb.com/api_config.php" target="_blank">OpenTrivia API</a> en donde el jugador puede seleccionar la categoria y la dificultad de las preguntas.</p>
+                    </TextInfo>
+                    <TechnologiesUsed>
+                        <h4>React Js</h4>
+                        <h4>Styled Components</h4>
+                        <h4>OpenTrivia Api</h4>
+                    </TechnologiesUsed>
+                    <IconsLink>
+                        <a href="https://github.com/darking98/quiz-app" target="_blank"><FiGithub/></a>
+                        <a href="https://darking98.github.io/quiz-app//" target="_blank"><BiLinkExternal/></a>
+                    </IconsLink>
+                </InfoWrapper>
+            </ProjectsWrapper>
+            <ProjectsWrapper>
+                <ImageWrapper>
+                    <a href="https://github.com/darking98/weather-api" target="_blank"><img src={weather} alt="" width="500px"/></a>
+                </ImageWrapper>
+                <InfoWrapper>
+                    <HeaderInfo>
+                        <h3>Weather App</h3>
+                    </HeaderInfo>
+                    <TextInfo>
+                        <p>Mediante consultas a la api de <a href="https://weatherstack.com/" target="_blank">WeatherStack</a> la aplicacion muestra hora y temperatura del lugar deseado y a su vez, con la api de <a href="https://unsplash.com/" target="_blank">Unsplash</a> despliega una imagen con la ciudad ingresada en tiempo real.
+                        <span>Pssst... para poder tener una mejor experiencia de usuario, se recomienda activar CORS desde este <a href="https://cors-anywhere.herokuapp.com/" target="_blank">link.</a> </span>
+                        </p>
+                    </TextInfo>
+                    <TechnologiesUsed>
+                        <h4>React Js</h4>
+                        <h4>Styled Components</h4>
+                        <h4>Weather Api</h4>
+                        <h4>Unsplash Api</h4>
+                    </TechnologiesUsed>
+                    <IconsLink>
+                        <a href="https://github.com/darking98/weather-api" target="_blank"><FiGithub/></a>
+                        <a href="https://darking98.github.io/weather-api/" target="_blank"><BiLinkExternal/></a>
+                    </IconsLink>
+                </InfoWrapper>
+            </ProjectsWrapper>
+            
             <ProjectsWrapper>
                 <ImageWrapper>
                     <a href="https://darking98.github.io/tic-tac-toe/" target="_blank"><img src={ticTacToe} alt="" width="500px"/></a>
@@ -32,51 +108,6 @@ const Projects = () => {
                     <IconsLink>
                         <a href="https://github.com/darking98/tic-tac-toe" target="_blank"><FiGithub/></a>
                         <a href="https://darking98.github.io/tic-tac-toe/" target="_blank"><BiLinkExternal/></a>
-                    </IconsLink>
-                </InfoWrapper>
-            </ProjectsWrapper>
-            <ProjectsWrapper>
-                <ImageWrapper>
-                    <a href="https://github.com/darking98/weather-api" target="_blank"><img src={weather} alt="" width="500px"/></a>
-                </ImageWrapper>
-                <InfoWrapper>
-                    <HeaderInfo>
-                        <h3>Weather App</h3>
-                    </HeaderInfo>
-                    <TextInfo>
-                        <p>Mediante consultas a la api de <a href="https://weatherstack.com/" target="_blank">WeatherStack</a> la aplicacion muestra hora y temperatura del lugar deseado y a su vez, con la api de <a href="https://unsplash.com/" target="_blank">Unsplash</a> despliega una imagen con la ciudad ingresada en tiempo real.</p>
-                    </TextInfo>
-                    <TechnologiesUsed>
-                        <h4>React Js</h4>
-                        <h4>Styled Components</h4>
-                        <h4>Weather Api</h4>
-                        <h4>Unsplash Api</h4>
-                    </TechnologiesUsed>
-                    <IconsLink>
-                        <a href="https://github.com/darking98/weather-api" target="_blank"><FiGithub/></a>
-                        <a href="https://darking98.github.io/weather-api/" target="_blank"><BiLinkExternal/></a>
-                    </IconsLink>
-                </InfoWrapper>
-            </ProjectsWrapper>
-            <ProjectsWrapper>
-                <ImageWrapper>
-                    <a href="https://darking98.github.io/quiz-app//" target="_blank"><img src={quiz} alt="" width="500px"/></a>
-                </ImageWrapper>
-                <InfoWrapper>
-                    <HeaderInfo>
-                        <h3>Quiz App</h3>
-                    </HeaderInfo>
-                    <TextInfo>
-                        <p>Juego de preguntas y respuestas traidas de OpenTrivia API en donde el jugador puede seleccionar la categoria y la dificultad de las preguntas.</p>
-                    </TextInfo>
-                    <TechnologiesUsed>
-                        <h4>React Js</h4>
-                        <h4>Styled Components</h4>
-                        <h4>OpenTrivia Api</h4>
-                    </TechnologiesUsed>
-                    <IconsLink>
-                        <a href="https://github.com/darking98/quiz-app" target="_blank"><FiGithub/></a>
-                        <a href="https://darking98.github.io/quiz-app//" target="_blank"><BiLinkExternal/></a>
                     </IconsLink>
                 </InfoWrapper>
             </ProjectsWrapper>
@@ -151,6 +182,8 @@ const ImageWrapper = styled.div`
             filter:none;
         }
     }
+
+    
 `
 
 const InfoWrapper = styled.div`
@@ -159,6 +192,8 @@ const InfoWrapper = styled.div`
     flex-direction:column;
     align-items:flex-end;
     justify-content:space-between;
+
+    
 
     @media (max-width:1180px){
         align-items:flex-start;
@@ -180,12 +215,23 @@ const TextInfo = styled.div`
     padding:20px;
     background-color: var(--lightest-black);
     box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.75);
+    
+
+    @media (min-width:1200px){
+        margin-left:-100px;
+        z-index: 99;
+    }
     p{
         font-size:20px;
         color:var(--lightest-gray);
 
         @media (max-width:600px){
             font-size:15px;
+        }
+
+        span{
+            display: block;
+            opacity: 0.65;
         }
         a{
             color:var(--orange);
