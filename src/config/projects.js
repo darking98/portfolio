@@ -12,10 +12,13 @@ export const projects = [
         info:'Es un clon de <a href="https://www.twitter.com/" target="_blank">Twitter</a> copiando la UI con la funcionalidades básicas de twitter como dar like, comentar y tener un perfil propio.',
         technologies:['React Js', 'Firebase', 'Scss/SASS'],
         iconsLinks:[
-            
+            {
+                icon:<FiGithub/>,
+                href:"https://github.com/darking98/twitter-clone"
+            },
             {
                 icon:<BiLinkExternal/>,
-                href:"https://github.com/darking98/twitter-clone/"
+                href:"https://github.com/darking98/twitter-clone"
             }
         ]
     },
