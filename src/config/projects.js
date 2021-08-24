@@ -18,7 +18,7 @@ export const projects = [
             },
             {
                 icon:<BiLinkExternal/>,
-                href:"https://github.com/darking98/twitter-clone"
+                href:"https://powerful-hollows-33877.herokuapp.com/"
             }
         ]
     },
