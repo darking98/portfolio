@@ -8,7 +8,7 @@ import { Trajectory } from './stations'
 import { Starfield, type StarfieldHandle } from './starfield'
 import { Constellation } from './constellation'
 import { Closer } from './closer'
-import { KICKER, type Station } from './data'
+import { KICKER, KICKER_SKILLS, type Station } from './data'
 import { useAboutAnimation } from './use-about-animation'
 import { warpIn } from '@/lib/transition'
 import { saveScroll } from '@/lib/scrollStore'
@@ -19,6 +19,7 @@ export default function About() {
   const router = useTransitionRouter()
   const sectionRef = useRef<HTMLElement>(null)
   const kickerRef = useRef<HTMLDivElement>(null)
+  const skillsKickerRef = useRef<HTMLDivElement>(null)
   const trajectoryRef = useRef<HTMLDivElement>(null)
   const skyRef = useRef<HTMLDivElement>(null)
   const starfieldRef = useRef<HTMLDivElement>(null)
@@ -49,6 +50,7 @@ export default function About() {
       gsap.to(
         [
           kickerRef.current,
+          skillsKickerRef.current,
           trajectoryRef.current,
           constRef.current,
           closerRef.current
@@ -69,6 +71,7 @@ export default function About() {
   useAboutAnimation({
     sectionRef,
     kickerRef,
+    skillsKickerRef,
     trajectoryRef,
     skyRef,
     starfieldRef,
@@ -108,7 +111,7 @@ export default function About() {
           <Starfield ref={starfieldApi} />
         </div>
 
-        {/* Kicker */}
+        {/* Kicker — Experience (Acto 2) */}
         <div
           ref={kickerRef}
           className="absolute top-[16vh] left-10 md:left-20"
@@ -116,6 +119,17 @@ export default function About() {
         >
           <span style={{ ...LABEL, color: '#c9a9b3', opacity: 0.9 }}>
             {KICKER}
+          </span>
+        </div>
+
+        {/* Kicker — Skills (Acto 3). Entra con la constelación; lo anima GSAP. */}
+        <div
+          ref={skillsKickerRef}
+          className="absolute top-[16vh] left-10 md:left-20"
+          style={{ zIndex: 4 }}
+        >
+          <span style={{ ...LABEL, color: '#c9a9b3', opacity: 0.9 }}>
+            {KICKER_SKILLS}
           </span>
         </div>
 

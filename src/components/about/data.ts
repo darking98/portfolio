@@ -1,5 +1,6 @@
-// ── Acto 1 — kicker + statement de apertura ──
-export const KICKER = '01 — Trajectory'
+// ── Kickers de sección ──
+export const KICKER = '01 — Experience'
+export const KICKER_SKILLS = '02 — Skills'
 
 // ── Acto 2 — "constelación naciente": las experiencias son estrellas que se
 // encienden y se conectan. x/y en viewBox 0–1920 / 0–1000. Trazadas de

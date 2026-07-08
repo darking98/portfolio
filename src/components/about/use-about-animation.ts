@@ -9,6 +9,7 @@ gsap.registerPlugin(ScrollTrigger)
 type AboutRefs = {
   sectionRef: RefObject<HTMLElement | null>
   kickerRef: RefObject<HTMLDivElement | null>
+  skillsKickerRef: RefObject<HTMLDivElement | null>
   trajectoryRef: RefObject<HTMLDivElement | null>
   skyRef: RefObject<HTMLDivElement | null>
   starfieldRef: RefObject<HTMLDivElement | null>
@@ -30,6 +31,7 @@ const VH = 1000
 export function useAboutAnimation({
   sectionRef,
   kickerRef,
+  skillsKickerRef,
   trajectoryRef,
   skyRef,
   starfieldRef,
@@ -43,6 +45,7 @@ export function useAboutAnimation({
     () => {
       // Estado inicial
       gsap.set(kickerRef.current, { autoAlpha: 0, y: 12 })
+      gsap.set(skillsKickerRef.current, { autoAlpha: 0, y: 12 })
       // La trajectory (línea + estrellas + labels) arranca OCULTA y sube junto
       // con el sky: nunca visible sobre el pastel del Hero (que se solapa por el
       // margin-top -100vh). Sin esto, la línea punteada se ve en el Hero.
@@ -183,6 +186,12 @@ export function useAboutAnimation({
       tl.to(
         constRef.current,
         { autoAlpha: 1, duration: 0.5, ease: 'power2.out' },
+        morph + 0.4
+      )
+      // El kicker cambia Experience → Skills al entrar la constelación
+      tl.to(
+        skillsKickerRef.current,
+        { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' },
         morph + 0.4
       )
       tl.to(

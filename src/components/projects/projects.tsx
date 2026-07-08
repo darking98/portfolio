@@ -72,7 +72,7 @@ export default function Projects() {
             opacity: 0.6
           }}
         >
-          02 / Work
+          03 — Work
         </span>
       </div>
 
