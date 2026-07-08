@@ -62,6 +62,16 @@ body::-webkit-scrollbar {
   100% { box-shadow: 0 0 0 0 rgba(125, 155, 106, 0); }
 }
 
+/* Pulso de los nodos de estación del About (accent maroon) */
+@keyframes aboutStationPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(107, 48, 64, 0.5); }
+  70%  { box-shadow: 0 0 0 10px rgba(107, 48, 64, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(107, 48, 64, 0); }
+}
+.about-pulse {
+  animation: aboutStationPulse 2.4s ease-out infinite;
+}
+
 /* ── View Transition: el slide-up se anima por JS (onTransitionReady) ──
    Acá solo desactivamos el crossfade default y damos orden de apilado. */
 ::view-transition-group(root) {

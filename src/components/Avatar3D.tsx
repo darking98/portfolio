@@ -89,14 +89,17 @@ useGLTF.preload('/avatar.glb')
 
 export default function Avatar3D({
   onLoaded,
-  cameraZRef
+  cameraZRef,
+  paused = false
 }: {
   onLoaded?: () => void
   cameraZRef?: { current: number }
+  paused?: boolean
 }) {
   return (
     <div className="w-full h-full">
       <Canvas
+        frameloop={paused ? 'never' : 'always'}
         camera={{ position: [1.5, 0, INITIAL_Z], fov: 30, near: 0.5, far: 20 }}
         gl={{
           alpha: true,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { INITIAL_Z } from './Avatar3D'
 import { useGSAP } from '@gsap/react'
 import { gsap } from 'gsap'
@@ -31,6 +31,11 @@ export default function Hero({
   const namesRef = useRef<HTMLDivElement>(null)
   const taglineRef = useRef<HTMLDivElement>(null)
   const cameraZRef = useRef(INITIAL_Z)
+  // Pausa el frameloop del Hero cuando el avatar ya hizo su fade-out (pasada
+  // la sección): corta el trabajo por-frame sin destruir el contexto WebGL.
+  // NO desmontar el canvas: recrear el contexto + recompilar shaders +
+  // re-subir la geometría a GPU produce un hitch notable al volver.
+  const [pastHero, setPastHero] = useState(false)
 
   useGSAP(() => {
     gsap.set(avatarContainerRef.current, {
@@ -74,7 +79,9 @@ export default function Hero({
                 trigger: sectionRef.current,
                 start: 'top top',
                 end: 'bottom bottom',
-                scrub: 0.8
+                scrub: 0.8,
+                onLeave: () => setPastHero(true),
+                onEnterBack: () => setPastHero(false)
               }
             })
             exit
@@ -207,7 +214,11 @@ export default function Hero({
           style={{ zIndex: 20 }}
         >
           <div ref={avatarContainerRef} className="w-full h-full">
-            <Avatar3D onLoaded={onAvatarLoaded} cameraZRef={cameraZRef} />
+            <Avatar3D
+              onLoaded={onAvatarLoaded}
+              cameraZRef={cameraZRef}
+              paused={pastHero}
+            />
           </div>
         </div>
 

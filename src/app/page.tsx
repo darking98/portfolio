@@ -4,14 +4,14 @@ import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react
 import dynamic from 'next/dynamic'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Hero from '@/components/Hero'
-import Header from '@/components/Header'
-import About from '@/components/About'
-import Projects from '@/components/Projects'
-import Contact from '@/components/Contact'
+import Header from '@/components/layout/header'
+import About from '@/components/about/about'
+import Projects from '@/components/projects/projects'
+import Contact from '@/components/contact/contact'
 import ScrollGuide from '@/components/ScrollGuide'
 import { takeScroll } from '@/lib/scrollStore'
 
-const Loader = dynamic(() => import('@/components/Loader'), { ssr: false })
+const Loader = dynamic(() => import('@/components/loader/loader'), { ssr: false })
 
 // useLayoutEffect en cliente, useEffect en SSR (evita el warning)
 const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
