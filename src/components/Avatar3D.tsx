@@ -97,7 +97,7 @@ export default function Avatar3D({
   return (
     <div className="w-full h-full">
       <Canvas
-        camera={{ position: [1.5, 0, INITIAL_Z], fov: 30 }}
+        camera={{ position: [1.5, 0, INITIAL_Z], fov: 30, near: 0.5, far: 20 }}
         gl={{
           alpha: true,
           antialias: true,

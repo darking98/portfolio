@@ -58,6 +58,7 @@ export default function Header() {
       <nav style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
         <a href="#about" style={LABEL}>About</a>
         <a href="#work"  style={LABEL}>Work</a>
+        <a href="#contact"  style={LABEL}>Contact</a>
       </nav>
     </header>
   )

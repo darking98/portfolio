@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# avatar fuente (236MB) — backup local, no va al repo
+public/avatar-original.glb
+
 # debug
 npm-debug.log*
 yarn-debug.log*

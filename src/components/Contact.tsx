@@ -21,19 +21,12 @@ const LABEL: React.CSSProperties = {
   textTransform: 'uppercase'
 }
 
-// Link con fondo pill oscuro para contrastar sobre el ASCII
+// Link tipográfico (sin caja) — sombra sutil para contrastar sobre el ASCII
 const LINK: React.CSSProperties = {
   ...LABEL,
   color: CREAM,
-  fontWeight: 600,
   display: 'inline-block',
-  padding: '6px 12px',
-  borderRadius: '999px',
-  background: 'rgba(10,7,6,0.55)',
-  border: '1px solid rgba(232,224,213,0.14)',
-  backdropFilter: 'blur(6px)',
-  WebkitBackdropFilter: 'blur(6px)',
-  textShadow: '0 1px 8px rgba(0,0,0,0.8)'
+  textShadow: '0 1px 12px rgba(0,0,0,0.85), 0 0 3px rgba(0,0,0,0.6)'
 }
 
 const SOCIALS = [
@@ -263,8 +256,8 @@ export default function Contact() {
           className="absolute bottom-0 inset-x-0 pointer-events-none"
           style={{
             zIndex: 5,
-            height: '48vh',
-            background: `linear-gradient(to top, ${BG}f2 0%, ${BG}b0 40%, transparent 100%)`
+            height: '55vh',
+            background: `linear-gradient(to top, ${BG} 0%, ${BG}d8 42%, transparent 100%)`
           }}
         />
 
@@ -276,7 +269,7 @@ export default function Contact() {
               <a
                 href="mailto:me@diegogabrielrodriguez.com"
                 style={LINK}
-                className="contact-fade hover:opacity-70 transition-opacity"
+                className="contact-fade"
               >
                 me@diegogabrielrodriguez.com
               </a>
@@ -290,7 +283,7 @@ export default function Contact() {
                   target="_blank"
                   rel="noreferrer"
                   style={LINK}
-                  className="contact-fade hover:opacity-70 transition-opacity"
+                  className="contact-fade"
                 >
                   {s.label}
                 </a>

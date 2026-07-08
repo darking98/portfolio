@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react'
 
 const ACCENT = '#6B3040'
 const MUTED = '#8a7a70'
+// Paleta para secciones oscuras (Contact)
+const D_ACCENT = '#e8e0d5'
+const D_MUTED = '#9a8578'
 
 // En orden de aparición (deben existir con estos id en el DOM)
 // clickOffset (fracción de viewport) = cuánto entrar en la sección al hacer click
@@ -20,6 +23,7 @@ interface Lenis {
 export default function ScrollGuide() {
   const [visible, setVisible] = useState(false)
   const [active, setActive] = useState(-1)
+  const [dark, setDark] = useState(false)
 
   useEffect(() => {
     const update = () => {
@@ -35,6 +39,13 @@ export default function ScrollGuide() {
         if (top <= vh * 0.5) idx = i
       })
       setActive(idx)
+
+      // ¿La guía está sobre la sección oscura (Contact)?
+      const contact = document.getElementById('contact')
+      if (contact) {
+        const r = contact.getBoundingClientRect()
+        setDark(r.top <= vh * 0.5 && r.bottom >= vh * 0.5)
+      }
     }
 
     update()
@@ -59,6 +70,9 @@ export default function ScrollGuide() {
     }
   }
 
+  const acc = dark ? D_ACCENT : ACCENT
+  const mut = dark ? D_MUTED : MUTED
+
   return (
     <div
       className="fixed right-8 top-1/2 -translate-y-1/2 z-40"
@@ -67,7 +81,7 @@ export default function ScrollGuide() {
       {/* Línea vertical */}
       <div
         className="absolute right-0 top-0 h-full"
-        style={{ width: '1px', background: MUTED, opacity: 0.25 }}
+        style={{ width: '1px', background: mut, opacity: 0.3, transition: 'background 0.4s ease' }}
       />
 
       <div className="flex flex-col gap-6 items-end">
@@ -86,9 +100,9 @@ export default function ScrollGuide() {
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
                 whiteSpace: 'nowrap',
-                color: active === i ? ACCENT : MUTED,
+                color: active === i ? acc : mut,
                 opacity: active === i ? 1 : 0.55,
-                transition: 'color 0.3s ease, opacity 0.3s ease'
+                transition: 'color 0.4s ease, opacity 0.3s ease'
               }}
             >
               {s.label}
@@ -98,8 +112,8 @@ export default function ScrollGuide() {
                 display: 'block',
                 width: active === i ? '16px' : '7px',
                 height: '1px',
-                background: active === i ? ACCENT : MUTED,
-                transition: 'width 0.3s ease, background 0.3s ease'
+                background: active === i ? acc : mut,
+                transition: 'width 0.3s ease, background 0.4s ease'
               }}
             />
           </button>
