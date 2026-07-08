@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+:root {
+  --bg: #e8e0d5;
+  --fg: #e8e2d9;
+  --fg-muted: #7a6e66;
+  --accent: #b07050;
+  --accent-dark: #7a4a30;
+  --secondary: #6B3040;
+  --loader: #6B3040;
+  --border: rgba(176, 112, 80, 0.12);
+
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+html {
+  scroll-behavior: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-weight: 300;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+@keyframes headerFadeIn {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes availablePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(125, 155, 106, 0.55); }
+  70%  { box-shadow: 0 0 0 6px rgba(125, 155, 106, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(125, 155, 106, 0); }
+}
+
+/* ── View Transition: el slide-up se anima por JS (onTransitionReady) ──
+   Acá solo desactivamos el crossfade default y damos orden de apilado. */
+::view-transition-group(root) {
+  animation-duration: 0.9s;
+  animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) { z-index: 1; }
+::view-transition-new(root) { z-index: 2; }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}

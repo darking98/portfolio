@@ -1,0 +1,35 @@
+{
+  "name": "portfolio-v2",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@tailwindcss/postcss": "^4.3.2",
+    "@types/three": "^0.185.0",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.25",
+    "next": "16.2.10",
+    "next-view-transitions": "^0.3.5",
+    "postcss": "^8.5.16",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwindcss": "^4.3.2",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10",
+    "typescript": "^5"
+  }
+}
