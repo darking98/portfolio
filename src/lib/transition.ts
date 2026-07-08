@@ -104,3 +104,39 @@ export function warpOut() {
     }
   )
 }
+
+// ── Shared-element (Work) ───────────────────────────────────────────────────
+// El título y la imagen del proyecto tienen el mismo view-transition-name en la
+// vitrina y en el detalle → el browser anima automáticamente su placement
+// (posición + tamaño) entre ambas vistas. Acá solo cross-fadeamos el "resto"
+// (root) para que el contenido no compartido no salte; los pares nombrados
+// (work-title / work-media) los coordina el propio API. La curva/duración de
+// esos grupos se define por CSS en globals (::view-transition-group).
+const SHARED = 520
+const SHARED_EASE = 'cubic-bezier(0.4, 0, 0.2, 1)'
+
+export function sharedMorph() {
+  const root = document.documentElement
+  root.animate(
+    [{ opacity: 1 }, { opacity: 0 }],
+    {
+      duration: SHARED,
+      easing: SHARED_EASE,
+      pseudoElement: '::view-transition-old(root)',
+    }
+  )
+  root.animate(
+    [{ opacity: 0 }, { opacity: 1 }],
+    {
+      duration: SHARED,
+      easing: SHARED_EASE,
+      pseudoElement: '::view-transition-new(root)',
+    }
+  )
+}
+
+// Vuelta desde el detalle de Work (misma coreografía inversa; los shared
+// elements vuelven a su lugar en la vitrina).
+export function sharedMorphBack() {
+  sharedMorph()
+}

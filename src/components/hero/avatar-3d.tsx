@@ -4,8 +4,7 @@ import { useRef, Suspense, useEffect, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
-
-const INITIAL_Z = 2.8
+import { INITIAL_Z } from './constants'
 
 interface ModelProps {
   onLoaded?: () => void
@@ -121,5 +120,3 @@ export default function Avatar3D({
     </div>
   )
 }
-
-export { INITIAL_Z }

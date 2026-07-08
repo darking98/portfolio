@@ -72,6 +72,30 @@ body::-webkit-scrollbar {
   animation: aboutStationPulse 2.4s ease-out infinite;
 }
 
+/* Preview generativo de Work: shimmer + barras que "respiran" */
+@keyframes workShimmer {
+  0%   { transform: translateX(-120%); }
+  100% { transform: translateX(220%); }
+}
+@keyframes workBar {
+  0%, 100% { transform: scaleX(0.55); opacity: 0.7; }
+  50%      { transform: scaleX(1);    opacity: 1; }
+}
+@keyframes workFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.work-shimmer {
+  animation: workShimmer 2.6s ease-in-out infinite;
+}
+.work-bar {
+  transform-origin: left center;
+  animation: workBar 2.4s ease-in-out infinite;
+}
+.work-float {
+  animation: workFloat 4s ease-in-out infinite;
+}
+
 /* ── View Transition: el slide-up se anima por JS (onTransitionReady) ──
    Acá solo desactivamos el crossfade default y damos orden de apilado. */
 ::view-transition-group(root) {
@@ -91,4 +115,18 @@ body::-webkit-scrollbar {
   ::view-transition-new(root) {
     animation: none !important;
   }
+}
+
+/* Shared elements de Work: el título y la imagen del proyecto morphean su
+   posición/tamaño entre la vitrina y el detalle. Curva suave + duración. */
+::view-transition-group(work-title),
+::view-transition-group(work-media) {
+  animation-duration: 0.62s;
+  animation-timing-function: cubic-bezier(0.5, 0, 0.15, 1);
+}
+/* Que el par nombrado no haga crossfade de contenido (solo morph de caja) */
+::view-transition-old(work-media),
+::view-transition-new(work-media) {
+  mix-blend-mode: normal;
+  height: 100%;
 }

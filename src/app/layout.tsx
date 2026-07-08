@@ -1,7 +1,7 @@
 import '../styles/globals.css'
 import { ViewTransitions } from 'next-view-transitions'
-import SmoothScroll from '@/components/SmoothScroll'
-import Background from '@/components/Background'
+import SmoothScroll from '@/components/layout/smooth-scroll'
+import Background from '@/components/layout/background'
 
 export const metadata = {
   title: 'Diego Rodriguez — Fullstack Developer',

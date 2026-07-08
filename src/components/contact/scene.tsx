@@ -1,5 +1,5 @@
 import { useRef, useEffect, useMemo } from 'react'
-import AsciiRenderer from '@/ui/ascii-renderer'
+import AsciiRenderer from './ascii-renderer'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'

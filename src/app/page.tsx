@@ -3,12 +3,12 @@
 import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import Hero from '@/components/Hero'
+import Hero from '@/components/hero/hero'
 import Header from '@/components/layout/header'
 import About from '@/components/about/about'
 import Projects from '@/components/projects/projects'
 import Contact from '@/components/contact/contact'
-import ScrollGuide from '@/components/ScrollGuide'
+import ScrollGuide from '@/components/layout/scroll-guide'
 import { takeScroll } from '@/lib/scrollStore'
 
 const Loader = dynamic(() => import('@/components/loader/loader'), { ssr: false })
