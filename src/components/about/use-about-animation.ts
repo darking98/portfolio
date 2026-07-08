@@ -9,6 +9,7 @@ gsap.registerPlugin(ScrollTrigger)
 type AboutRefs = {
   sectionRef: RefObject<HTMLElement | null>
   kickerRef: RefObject<HTMLDivElement | null>
+  trajectoryRef: RefObject<HTMLDivElement | null>
   skyRef: RefObject<HTMLDivElement | null>
   starfieldRef: RefObject<HTMLDivElement | null>
   starRefs: RefObject<(HTMLDivElement | null)[]>
@@ -29,6 +30,7 @@ const VH = 1000
 export function useAboutAnimation({
   sectionRef,
   kickerRef,
+  trajectoryRef,
   skyRef,
   starfieldRef,
   starRefs,
@@ -41,7 +43,20 @@ export function useAboutAnimation({
     () => {
       // Estado inicial
       gsap.set(kickerRef.current, { autoAlpha: 0, y: 12 })
-      gsap.set(starRefs.current, { autoAlpha: 0, scale: 0.2, x: 0, y: 0 })
+      // La trajectory (línea + estrellas + labels) arranca OCULTA y sube junto
+      // con el sky: nunca visible sobre el pastel del Hero (que se solapa por el
+      // margin-top -100vh). Sin esto, la línea punteada se ve en el Hero.
+      gsap.set(trajectoryRef.current, { opacity: 0 })
+      // xPercent/yPercent -50 centra el botón en el punto (reemplaza las clases
+      // -translate-*-1/2, que GSAP pisaría al escribir su propio transform).
+      gsap.set(starRefs.current, {
+        xPercent: -50,
+        yPercent: -50,
+        autoAlpha: 0,
+        scale: 0.2,
+        x: 0,
+        y: 0
+      })
       gsap.set(labelRefs.current, { autoAlpha: 0, y: 14, filter: 'blur(6px)' })
       gsap.set(constRef.current, { autoAlpha: 0 })
       gsap.set(closerRef.current, { autoAlpha: 0, y: 22, filter: 'blur(8px)' })
@@ -66,6 +81,13 @@ export function useAboutAnimation({
       // ── Ascenso: el cielo oscurece rápido (queda oscuro antes de que se
       // encienda la 2ª estrella) y el starfield aparece con él ──
       tl.to(skyRef.current, { opacity: 1, ease: 'power2.out', duration: 0.55 }, 0)
+      // La trajectory aparece un pelín DESPUÉS de que el sky ya cubre → nunca
+      // sobre el Hero pastel.
+      tl.to(
+        trajectoryRef.current,
+        { opacity: 1, ease: 'none', duration: 0.35 },
+        0.22
+      )
       tl.to(
         starfieldRef.current,
         { opacity: 1, ease: 'none', duration: 0.6 },
@@ -125,28 +147,28 @@ export function useAboutAnimation({
         { autoAlpha: 0, y: -10, filter: 'blur(6px)', duration: 0.4 },
         morph
       )
-      // líneas se destejen
-      linkRefs.current.forEach((p) => {
-        if (!p) return
-        const len = p.getTotalLength()
-        tl.to(p, { strokeDashoffset: len, duration: 0.4, ease: 'none' }, morph)
-      })
+      // líneas fuera — por OPACIDAD (autoAlpha), garantizado invisible. El
+      // strokeDashoffset dejaba residuo visible en la sección de skills.
+      tl.to(
+        linkRefs.current,
+        { autoAlpha: 0, duration: 0.35, ease: 'power2.in' },
+        morph
+      )
       tl.to(kickerRef.current, { autoAlpha: 0, duration: 0.4 }, morph)
 
       // Cada estrella fluye hacia el nodo-madre de un cluster (destino). Se
-      // reparten: 0→frontend, 1→backend, 2→ai, 3→ai (sobra una → al AI).
+      // reparten: 0→frontend, 1→backend, 2→ai, 3→ai. dx/dy como FUNCIONES → se
+      // recalculan en cada refresh (invalidateOnRefresh) con el viewport actual,
+      // así aterrizan EXACTO sobre el nodo-madre del cluster.
       const dest = [CLUSTERS[0], CLUSTERS[1], CLUSTERS[2], CLUSTERS[2]]
       STATIONS.forEach((s, i) => {
         const el = starRefs.current[i]
         if (!el) return
-        // delta en px de pantalla desde la posición de la estrella al destino
-        const dx = ((dest[i].x - s.x) / VW) * window.innerWidth
-        const dy = ((dest[i].y - s.y) / VH) * window.innerHeight
         tl.to(
           el,
           {
-            x: dx,
-            y: dy,
+            x: () => ((dest[i].x - s.x) / VW) * window.innerWidth,
+            y: () => ((dest[i].y - s.y) / VH) * window.innerHeight,
             scale: 1.4,
             duration: 0.6,
             ease: 'power2.inOut'

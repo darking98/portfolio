@@ -11,7 +11,8 @@ const D_MUTED = '#9a8578'
 // En orden de aparición (deben existir con estos id en el DOM)
 // clickOffset (fracción de viewport) = cuánto entrar en la sección al hacer click
 const sections = [
-  { id: 'about', label: 'About', clickOffset: 0.4 },
+  { id: 'experience', label: 'Experience', clickOffset: 0 },
+  { id: 'skills', label: 'Skills', clickOffset: 0 },
   { id: 'work', label: 'Work', clickOffset: 0 },
   { id: 'contact', label: 'Contact', clickOffset: 0 }
 ]

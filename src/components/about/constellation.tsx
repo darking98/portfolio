@@ -69,9 +69,13 @@ export function Constellation({ constRef }: Props) {
         d
       }
     })
-    const onMove = (e: MouseEvent) => {
-      const nx = e.clientX / window.innerWidth - 0.5
-      const ny = e.clientY / window.innerHeight - 0.5
+    // Throttle a rAF: no encolar tweens por cada evento de mousemove (que puede
+    // disparar cientos por segundo) → un solo update por frame.
+    let raf = 0
+    let nx = 0
+    let ny = 0
+    const apply = () => {
+      raf = 0
       lx(-nx * 20)
       ly(-ny * 14)
       for (const s of setters) {
@@ -79,8 +83,20 @@ export function Constellation({ constRef }: Props) {
         s.y(-ny * s.d * 0.7)
       }
     }
+    const onMove = (e: MouseEvent) => {
+      nx = e.clientX / window.innerWidth - 0.5
+      ny = e.clientY / window.innerHeight - 0.5
+      if (!raf) raf = requestAnimationFrame(apply)
+    }
     window.addEventListener('mousemove', onMove)
-    return () => window.removeEventListener('mousemove', onMove)
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      if (raf) cancelAnimationFrame(raf)
+      // Mata los tweens quickTo (siguen vivos en el ticker global de GSAP si no
+      // se limpian → fuga de memoria al remontar About).
+      gsap.killTweensOf(layer)
+      depthEls.forEach((el) => gsap.killTweensOf(el))
+    }
   }, [])
 
   const orbits = useMemo(
@@ -229,31 +245,36 @@ function ClusterView({
       })}
 
       {/* Nodo-madre (la "estrella brillante" del cluster) */}
+      {/* El PUNTO del nodo-madre se ancla exactamente en (cluster.x, cluster.y)
+          — el mismo destino al que aterriza la estrella-experiencia. El label y
+          el "tap to reveal" cuelgan absolutos debajo, sin desplazar el punto. */}
       <button
         onClick={(e) => {
           e.stopPropagation()
           if (isActive) onCollapse()
           else onOpen()
         }}
-        className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3"
+        className="absolute -translate-x-1/2 -translate-y-1/2"
         style={{
           left: '50%',
           top: '50%',
+          width: isAI ? 16 : 13,
+          height: isAI ? 16 : 13,
           background: 'transparent',
           border: 'none',
           cursor: 'pointer'
         }}
       >
         <span
-          className="relative flex items-center justify-center rounded-full"
+          className="relative block rounded-full"
           style={{
-            width: isAI ? 16 : 13,
-            height: isAI ? 16 : 13,
+            width: '100%',
+            height: '100%',
             background: starColor,
             boxShadow: isActive
               ? `0 0 24px 4px ${starColor}, 0 0 0 10px ${starColor}14`
               : `0 0 14px 2px ${starColor}aa`,
-            transition: 'box-shadow 0.45s ease, width 0.3s ease'
+            transition: 'box-shadow 0.45s ease'
           }}
         >
           <span
@@ -261,30 +282,37 @@ function ClusterView({
             style={{ boxShadow: `0 0 0 0 ${starColor}` }}
           />
         </span>
+
+        {/* Label + hint, colgando debajo del punto (no afectan su centro) */}
         <span
-          className="uppercase"
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: isAI ? '0.85rem' : '0.78rem',
-            fontWeight: 600,
-            letterSpacing: '0.16em',
-            color: isAI ? STAR_AI : STAR
-          }}
+          className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 whitespace-nowrap"
+          style={{ top: 'calc(100% + 12px)' }}
         >
-          {cluster.label}
-        </span>
-        <span
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: '0.58rem',
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: DIM,
-            opacity: isActive ? 0 : 0.75,
-            transition: 'opacity 0.3s ease'
-          }}
-        >
-          {cluster.skills.length} · tap to reveal
+          <span
+            className="uppercase"
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: isAI ? '0.85rem' : '0.78rem',
+              fontWeight: 600,
+              letterSpacing: '0.16em',
+              color: isAI ? STAR_AI : STAR
+            }}
+          >
+            {cluster.label}
+          </span>
+          <span
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: '0.58rem',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: DIM,
+              opacity: isActive ? 0 : 0.75,
+              transition: 'opacity 0.3s ease'
+            }}
+          >
+            {cluster.skills.length} · tap to reveal
+          </span>
         </span>
       </button>
     </div>

@@ -24,8 +24,11 @@ export default function Header() {
     >
       <HeaderStatus time={time} />
       <nav style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-        <a href="#about" style={LABEL}>
-          About
+        <a href="#experience" style={LABEL}>
+          Experience
+        </a>
+        <a href="#skills" style={LABEL}>
+          Skills
         </a>
         <a href="#work" style={LABEL}>
           Work

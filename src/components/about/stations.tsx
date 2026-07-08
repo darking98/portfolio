@@ -1,11 +1,13 @@
 import type { RefObject } from 'react'
-import { STATIONS } from './data'
+import { STATIONS, type Station } from './data'
 
 type Props = {
+  wrapRef: RefObject<HTMLDivElement | null>
   starRefs: RefObject<(HTMLDivElement | null)[]>
   labelRefs: RefObject<(HTMLDivElement | null)[]>
   linkRefs: RefObject<(SVGPathElement | null)[]>
   svgRef: RefObject<SVGSVGElement | null>
+  onStarClick: (station: Station, cx: number, cy: number) => void
 }
 
 const VW = 1920
@@ -23,29 +25,45 @@ function pct(x: number, y: number) {
 // "Constelación naciente": cada experiencia es una estrella que se enciende y
 // se conecta con la anterior por una línea que se traza. La activa muestra su
 // texto al lado; las visitadas quedan como estrellas tenues conectadas.
-export function Trajectory({ starRefs, labelRefs, linkRefs, svgRef }: Props) {
+export function Trajectory({
+  wrapRef,
+  starRefs,
+  labelRefs,
+  linkRefs,
+  svgRef,
+  onStarClick
+}: Props) {
   return (
     <div
+      ref={wrapRef}
       className="absolute inset-0 overflow-hidden pointer-events-none"
       style={{ zIndex: 3 }}
     >
-      {/* Líneas conectoras entre estrellas consecutivas */}
+      {/* Líneas conectoras entre estrellas consecutivas.
+          viewBox 0–100 + preserveAspectRatio="none" → coordenadas en % del
+          viewport, EL MISMO mapeo que usan las estrellas (pct). Así los extremos
+          de la línea caen exactamente sobre el centro de cada punto. El escalado
+          no-uniforme no deforma el trazo gracias a non-scaling-stroke. */}
       <svg
         ref={svgRef}
         className="absolute inset-0 w-full h-full"
-        viewBox={`0 0 ${VW} ${VH}`}
-        preserveAspectRatio="xMidYMid slice"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
         fill="none"
       >
         {STATIONS.slice(0, -1).map((s, i) => {
           const n = STATIONS[i + 1]
+          const x1 = (s.x / VW) * 100
+          const y1 = (s.y / VH) * 100
+          const x2 = (n.x / VW) * 100
+          const y2 = (n.y / VH) * 100
           return (
             <path
               key={i}
               ref={(el) => {
                 linkRefs.current[i] = el
               }}
-              d={`M ${s.x} ${s.y} L ${n.x} ${n.y}`}
+              d={`M ${x1} ${y1} L ${x2} ${y2}`}
               stroke={LINK}
               strokeWidth={1.4}
               strokeLinecap="round"
@@ -59,20 +77,40 @@ export function Trajectory({ starRefs, labelRefs, linkRefs, svgRef }: Props) {
       {/* Estrellas + labels */}
       {STATIONS.map((s, i) => (
         <div key={s.company} className="absolute" style={pct(s.x, s.y)}>
-          {/* Estrella */}
-          <div
+          {/* Estrella = botón (hit-area 34px). GSAP anima este elemento
+              (autoAlpha/scale/x/y por scrub + morph): al estar oculto por
+              autoAlpha:hidden, no es clickeable → solo clickeable cuando está
+              encendida. pointer-events-auto solo acá (el contenedor es none). */}
+          <button
             ref={(el) => {
-              starRefs.current[i] = el
+              starRefs.current[i] = el as unknown as HTMLDivElement
             }}
-            className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
+            aria-label={`${s.role} — ${s.company}`}
+            onClick={(e) => {
+              const r = e.currentTarget.getBoundingClientRect()
+              onStarClick(s, r.left + r.width / 2, r.top + r.height / 2)
+            }}
+            className="group absolute flex items-center justify-center"
             style={{
-              width: 8,
-              height: 8,
-              background: STAR,
-              boxShadow: `0 0 16px 3px ${GLOW}`,
+              width: 34,
+              height: 34,
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              pointerEvents: 'auto',
               willChange: 'transform, opacity'
             }}
-          />
+          >
+            <div
+              className="rounded-full transition-[box-shadow,width,height] duration-300 group-hover:w-3 group-hover:h-3"
+              style={{
+                width: 8,
+                height: 8,
+                background: STAR,
+                boxShadow: `0 0 16px 3px ${GLOW}`
+              }}
+            />
+          </button>
 
           {/* Label (rol · empresa · años) al lado que corresponde. El padre está
               anclado en el punto de la estrella (0,0 = centro del dot). El label

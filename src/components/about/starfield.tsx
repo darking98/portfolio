@@ -1,11 +1,16 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react'
 
 // Campo de estrellas en Canvas 2D dedicado (NO R3F — no agrega contexto WebGL).
 // Full-screen fijo detrás de la constelación; parallax por mouse en capas de
 // profundidad + twinkle. El rAF sigue corriendo pero salta el dibujo cuando el
 // canvas no está en viewport (IntersectionObserver) para no gastar frames.
+//
+// Expone una API imperativa `warp(cx, cy)`: acelera todas las estrellas en
+// líneas de velocidad radiando desde (cx,cy) → efecto hyperspace hacia ese
+// punto. Devuelve una promesa que resuelve cerca del pico (para encadenar la
+// navegación). `resetWarp()` vuelve al estado normal.
 type Star = {
   x: number
   y: number
@@ -15,17 +20,36 @@ type Star = {
   tws: number // velocidad de twinkle
 }
 
-// Estrella fugaz: cruza en diagonal, deja estela, y muere fuera de pantalla.
 type Meteor = {
   x: number
   y: number
   vx: number
   vy: number
-  len: number // largo de la estela (px)
+  len: number
 }
 
-export function Starfield() {
+export type StarfieldHandle = {
+  warp: (cx: number, cy: number) => Promise<void>
+  resetWarp: () => void
+}
+
+export const Starfield = forwardRef<StarfieldHandle>(function Starfield(_, ref) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  // Estado de warp compartido con el loop (mutable, sin re-render)
+  const warpRef = useRef({ active: false, t: 0, cx: 0, cy: 0 })
+
+  useImperativeHandle(ref, () => ({
+    warp: (cx: number, cy: number) => {
+      warpRef.current = { active: true, t: 0, cx, cy }
+      // Dispara la navegación cuando el flash ya llena la pantalla → la view
+      // transition revela el destino desde el blanco sin pausa.
+      return new Promise<void>((resolve) => setTimeout(resolve, 620))
+    },
+    resetWarp: () => {
+      warpRef.current.active = false
+      warpRef.current.t = 0
+    }
+  }))
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -39,18 +63,18 @@ export function Starfield() {
     let stars: Star[] = []
     let visible = true
     const meteors: Meteor[] = []
-    let nextMeteor = 1.2 + Math.random() * 2.5 // segundos hasta el próximo
-    const mouse = { x: 0, y: 0 } // -1..1 suavizado
+    let nextMeteor = 1.2 + Math.random() * 2.5
+    const mouse = { x: 0, y: 0 }
     const target = { x: 0, y: 0 }
 
     const spawnMeteor = () => {
-      const ltr = Math.random() < 0.5 // izq→der o der→izq
-      const speed = 400 + Math.random() * 480 // px/s
-      const angle = (12 + Math.random() * 16) * (Math.PI / 180) // leve diagonal
+      const ltr = Math.random() < 0.5
+      const speed = 400 + Math.random() * 480
+      const angle = (12 + Math.random() * 16) * (Math.PI / 180)
       const dir = ltr ? 1 : -1
       meteors.push({
         x: ltr ? -80 : w + 80,
-        y: Math.random() * h * 0.6, // aparecen en la mitad superior sobre todo
+        y: Math.random() * h * 0.6,
         vx: dir * speed * Math.cos(angle),
         vy: speed * Math.sin(angle),
         len: 90 + Math.random() * 120
@@ -67,7 +91,7 @@ export function Starfield() {
       canvas.style.height = `${h}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-      const count = Math.round((w * h) / 6500) // densidad responsive
+      const count = Math.round((w * h) / 6500)
       stars = Array.from({ length: count }, () => {
         const z = Math.random()
         return {
@@ -105,16 +129,63 @@ export function Starfield() {
       raf = requestAnimationFrame(loop)
       const dt = Math.min((t - last) / 1000, 0.05)
       last = t
-      if (!visible) return
+      const warp = warpRef.current
+      // Durante el warp seguimos dibujando aunque el IO diga no-visible (el
+      // click puede dispararlo en cualquier momento).
+      if (!visible && !warp.active) return
 
-      // parallax suavizado
       mouse.x += (target.x - mouse.x) * 0.05
       mouse.y += (target.y - mouse.y) * 0.05
 
-      ctx.clearRect(0, 0, w, h)
+      // progreso del warp 0..1 (dura ~0.9s)
+      let wp = 0
+      if (warp.active) {
+        warp.t += dt
+        wp = Math.min(warp.t / 0.72, 1)
+      }
+      // easeInCubic: acelera fuerte hacia el final (flash lleno cerca de navegar)
+      const accel = wp * wp * wp
+
+      // durante el warp oscurecemos con estela (no clear total) → rastros
+      if (warp.active) {
+        ctx.fillStyle = `rgba(13, 10, 18, ${0.35 - accel * 0.15})`
+        ctx.fillRect(0, 0, w, h)
+      } else {
+        ctx.clearRect(0, 0, w, h)
+      }
+
       for (const s of stars) {
         s.tw += dt * s.tws
-        // capas: las cercanas (z alto) se desplazan más → profundidad
+
+        if (warp.active) {
+          // vector desde el punto de warp a la estrella → dirección de fuga
+          const dx = s.x - warp.cx
+          const dy = s.y - warp.cy
+          const dist = Math.hypot(dx, dy) || 1
+          const ux = dx / dist
+          const uy = dy / dist
+          // las estrellas se alejan del punto acelerando (efecto de caer hacia él)
+          const push = accel * (dist * 1.4 + 120)
+          const hx = s.x + ux * push
+          const hy = s.y + uy * push
+          // estela: línea desde posición base a la posición empujada
+          const streak = 8 + accel * 90
+          const tailX = hx - ux * streak
+          const tailY = hy - uy * streak
+          const alpha = 0.5 + accel * 0.5
+          const grad = ctx.createLinearGradient(hx, hy, tailX, tailY)
+          grad.addColorStop(0, `rgba(255, 250, 244, ${alpha})`)
+          grad.addColorStop(1, 'rgba(232, 224, 213, 0)')
+          ctx.strokeStyle = grad
+          ctx.lineWidth = 0.8 + s.z * 1.6
+          ctx.lineCap = 'round'
+          ctx.beginPath()
+          ctx.moveTo(hx, hy)
+          ctx.lineTo(tailX, tailY)
+          ctx.stroke()
+          continue
+        }
+
         const px = s.x - mouse.x * 26 * s.z
         const py = s.y - mouse.y * 18 * s.z
         const twinkle = 0.55 + 0.45 * Math.sin(s.tw)
@@ -125,22 +196,50 @@ export function Starfield() {
         ctx.fill()
       }
 
+      // Núcleo de luz creciendo en el punto de warp (el "destino"). El radio se
+      // mide hasta la esquina MÁS LEJANA del punto → así llena toda la pantalla
+      // aunque la estrella esté en un borde. `flash` va más rápido que accel
+      // para que el blanco domine casi toda la pantalla cerca del disparo.
+      if (warp.active) {
+        const corner = Math.hypot(
+          Math.max(warp.cx, w - warp.cx),
+          Math.max(warp.cy, h - warp.cy)
+        )
+        const flash = Math.min(wp * 1.35, 1) // llega a 1 antes que el final
+        const rad = 4 + flash * corner * 1.15
+        const core = ctx.createRadialGradient(
+          warp.cx,
+          warp.cy,
+          0,
+          warp.cx,
+          warp.cy,
+          rad
+        )
+        core.addColorStop(0, `rgba(255, 253, 250, ${0.2 + flash * 0.8})`)
+        core.addColorStop(0.65, `rgba(244, 238, 230, ${flash * 0.7})`)
+        core.addColorStop(1, 'rgba(232, 224, 213, 0)')
+        ctx.fillStyle = core
+        ctx.beginPath()
+        ctx.arc(warp.cx, warp.cy, rad, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      if (warp.active) return // sin meteoros durante el warp
+
       // ── Estrellas fugaces ──
       nextMeteor -= dt
       if (nextMeteor <= 0) {
         spawnMeteor()
-        nextMeteor = 2.5 + Math.random() * 4 // cada ~2.5–6.5s
+        nextMeteor = 2.5 + Math.random() * 4
       }
       for (let i = meteors.length - 1; i >= 0; i--) {
         const m = meteors[i]
         m.x += m.vx * dt
         m.y += m.vy * dt
-        // fuera de pantalla (con margen) → muere
         if (m.x < -160 || m.x > w + 160 || m.y > h + 160) {
           meteors.splice(i, 1)
           continue
         }
-        // estela: gradiente desde la cabeza hacia atrás (opuesto a la velocidad)
         const mag = Math.hypot(m.vx, m.vy) || 1
         const ux = m.vx / mag
         const uy = m.vy / mag
@@ -157,7 +256,6 @@ export function Starfield() {
         ctx.moveTo(m.x, m.y)
         ctx.lineTo(tailX, tailY)
         ctx.stroke()
-        // cabeza brillante
         ctx.beginPath()
         ctx.arc(m.x, m.y, 1.6, 0, Math.PI * 2)
         ctx.fillStyle = 'rgba(255, 252, 247, 0.95)'
@@ -181,4 +279,4 @@ export function Starfield() {
       style={{ zIndex: 1 }}
     />
   )
-}
+})

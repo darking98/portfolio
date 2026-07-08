@@ -6,6 +6,7 @@ export const KICKER = '01 — Trajectory'
 // abajo-izquierda a arriba-derecha para sugerir el ascenso hacia el espacio.
 // `labelSide` decide de qué lado del punto se lee el texto (evita chocar borde).
 export type Station = {
+  slug: string
   role: string
   company: string
   sector?: string
@@ -17,6 +18,7 @@ export type Station = {
 
 export const STATIONS: Station[] = [
   {
+    slug: 'freelance',
     role: 'Web Developer',
     company: 'Freelance',
     years: '2021',
@@ -25,6 +27,7 @@ export const STATIONS: Station[] = [
     labelSide: 'right'
   },
   {
+    slug: 'castor',
     role: 'Front End Developer',
     company: 'Castor, Inc',
     sector: 'Fintech',
@@ -34,6 +37,7 @@ export const STATIONS: Station[] = [
     labelSide: 'left'
   },
   {
+    slug: 'polynomium',
     role: 'Fullstack Developer',
     company: 'Polynomium',
     sector: 'Fintech',
@@ -43,6 +47,7 @@ export const STATIONS: Station[] = [
     labelSide: 'right'
   },
   {
+    slug: 'infinity-corp',
     role: 'AI Full Stack Engineer',
     company: 'Infinity Corp',
     sector: 'iGaming',
@@ -52,6 +57,56 @@ export const STATIONS: Station[] = [
     labelSide: 'left'
   }
 ]
+
+// Detalle de cada experiencia (contenido placeholder — completar luego).
+export type ExperienceDetail = {
+  intro: string
+  highlights: string[]
+  stack: string[]
+}
+
+export const EXPERIENCE_DETAILS: Record<string, ExperienceDetail> = {
+  freelance: {
+    intro:
+      'Placeholder — describí acá el trabajo freelance: qué clientes, qué construiste, qué aprendiste en esta primera etapa.',
+    highlights: [
+      'Logro / proyecto destacado #1',
+      'Logro / proyecto destacado #2',
+      'Logro / proyecto destacado #3'
+    ],
+    stack: ['HTML', 'CSS/SCSS', 'JavaScript', 'React']
+  },
+  castor: {
+    intro:
+      'Placeholder — Castor, Inc (Fintech). Contá tu rol como Front End Developer, los productos en los que trabajaste y el impacto.',
+    highlights: [
+      'Logro / proyecto destacado #1',
+      'Logro / proyecto destacado #2',
+      'Logro / proyecto destacado #3'
+    ],
+    stack: ['React', 'TypeScript', 'Chakra UI', 'React Query']
+  },
+  polynomium: {
+    intro:
+      'Placeholder — Polynomium (Fintech). Rol Fullstack: pagos internacionales, dashboards en tiempo real, alta concurrencia.',
+    highlights: [
+      'Logro / proyecto destacado #1',
+      'Logro / proyecto destacado #2',
+      'Logro / proyecto destacado #3'
+    ],
+    stack: ['Next.js', 'Node.js', 'PostgreSQL', 'Docker']
+  },
+  'infinity-corp': {
+    intro:
+      'Placeholder — Infinity Corp (iGaming). AI Full Stack Engineer: agents, sistemas LLM, orquestación con MCP, plataformas de alta concurrencia.',
+    highlights: [
+      'Logro / proyecto destacado #1',
+      'Logro / proyecto destacado #2',
+      'Logro / proyecto destacado #3'
+    ],
+    stack: ['LLMs', 'AI Agents', 'MCP', 'Next.js', 'SSE']
+  }
+}
 
 // ── Acto 3 — 3 constelaciones interactivas ──
 // Cada cluster es un nodo-madre; al hacer click despliega sus skills orbitando.
