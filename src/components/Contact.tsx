@@ -193,10 +193,11 @@ export default function Contact() {
         0.42
       )
 
-      // Los links entran con desplazamiento (sin autoAlpha → nunca quedan invisibles)
+      // Los links entran (ocultos hasta el reveal; el pill resuelve el contraste)
       tl.from(
         '.contact-fade',
         {
+          autoAlpha: 0,
           y: 22,
           filter: 'blur(5px)',
           duration: 0.35,
