@@ -1,16 +1,33 @@
 'use client'
 
+import { useRef } from 'react'
 import { useTransitionRouter } from 'next-view-transitions'
+import { useGSAP } from '@gsap/react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import type { Project, ProjectDetail } from '@/components/projects/data'
-import { ProjectPreview } from '@/components/projects/project-preview'
 import { sharedMorphBack } from '@/lib/transition'
 import { useScrollTop } from '@/lib/useScrollTop'
 import { setWorkReturn } from '@/lib/workReturn'
+import { ProjectCover } from './project-cover'
+
+gsap.registerPlugin(ScrollTrigger)
 
 // Misma paleta que el resto (Background global pastel detrás → fondo transparente).
 const FG = '#2a1a14'
 const MUTED = '#8a7a70'
 const ACCENT = '#6B3040'
+const HAIR = 'rgba(42, 26, 20, 0.14)'
+
+const KICKER: React.CSSProperties = {
+  fontFamily: "'DM Sans', sans-serif",
+  fontSize: '0.62rem',
+  letterSpacing: '0.22em',
+  textTransform: 'uppercase',
+  color: MUTED
+}
+
+const PAD = 'px-6 md:px-12'
 
 type Props = {
   project: Project
@@ -20,6 +37,7 @@ type Props = {
 export function WorkPage({ project, detail }: Props) {
   useScrollTop()
   const router = useTransitionRouter()
+  const mainRef = useRef<HTMLElement>(null)
   const goBack = () => {
     // Recuerda el proyecto para el morph inverso (la vitrina reasigna los
     // view-transition-name a esta fila al remontar).
@@ -27,220 +45,184 @@ export function WorkPage({ project, detail }: Props) {
     router.push('/', { onTransitionReady: sharedMorphBack, scroll: false })
   }
 
+  // Reveal por scroll: cada sección `.reveal` hace fade-in + leve subida al
+  // entrar en viewport (una sola vez, no scrub). Descubre la data al bajar.
+  useGSAP(
+    () => {
+      const els = gsap.utils.toArray<HTMLElement>('.reveal')
+      els.forEach((el) => {
+        gsap.from(el, {
+          autoAlpha: 0,
+          y: 28,
+          duration: 0.7,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        })
+      })
+    },
+    { scope: mainRef }
+  )
+
   return (
     <main
-      className="relative min-h-screen w-full overflow-hidden"
+      ref={mainRef}
+      className="relative min-h-screen w-full overflow-x-clip"
       style={{ color: FG }}
     >
-      <div className="relative max-w-6xl mx-auto px-10 md:px-16 py-24 md:py-32">
-        {/* Volver */}
-        <button
-          onClick={goBack}
-          className="mb-16 inline-flex items-center gap-2"
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: '0.7rem',
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            color: MUTED,
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer'
-          }}
-        >
-          ← Back to work
-        </button>
+      {/* Volver: fijo arriba, sobre el cover oscuro */}
+      <button
+        onClick={goBack}
+        className="cover-back fixed top-8 left-6 md:left-12 z-50 inline-flex items-center gap-2"
+        style={{
+          ...KICKER,
+          fontSize: '0.7rem',
+          letterSpacing: '0.16em',
+          color: '#e8e0d5',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          mixBlendMode: 'difference'
+        }}
+      >
+        ← Back to work
+      </button>
 
-        {/* Encabezado */}
-        <div
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: '0.68rem',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            color: MUTED,
-            marginBottom: '1.2rem'
-          }}
-        >
-          {project.kind} · {project.year}
-        </div>
+      {/* ── Portada interactiva 3D (full-screen) ── */}
+      <ProjectCover project={project} detail={detail} />
 
-        <h1
-          className="leading-none"
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 'clamp(2.5rem, 7vw, 6rem)',
-            fontWeight: 500,
-            letterSpacing: '-0.03em',
-            color: FG,
-            // Shared element: morphea desde el título de la fila en la vitrina
-            viewTransitionName: 'work-title'
-          }}
+      {/* ── CTA al sitio: banda apenas pasás el cover ── */}
+      {detail.links && detail.links.length > 0 && (
+        <section
+          className={`reveal ${PAD} py-12 md:py-16`}
+          style={{ borderBottom: `1px solid ${HAIR}` }}
         >
-          {project.title}
-        </h1>
-        <div
-          className="mt-3"
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 'clamp(1.1rem, 1.8vw, 1.5rem)',
-            color: ACCENT,
-            letterSpacing: '-0.01em'
-          }}
-        >
-          {detail.role}
-        </div>
-
-        {/* Hero visual del proyecto (el mismo preview generativo, en grande).
-            Shared element: morphea desde la preview flotante de la vitrina. */}
-        <div
-          className="mt-14 w-full"
-          style={{
-            height: 'clamp(240px, 42vh, 520px)',
-            viewTransitionName: 'work-media'
-          }}
-        >
-          <ProjectPreview project={project} />
-        </div>
-
-        {/* Métricas */}
-        <div className="mt-14 flex flex-wrap gap-x-16 gap-y-8">
-          {project.metrics.map((m) => (
-            <div key={m.label}>
-              <div
-                style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 'clamp(2rem, 4vw, 3.2rem)',
-                  fontWeight: 600,
-                  color: FG,
-                  letterSpacing: '-0.03em',
-                  lineHeight: 1
-                }}
-              >
-                {m.value}
-              </div>
-              <div
-                style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: '0.68rem',
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  color: MUTED,
-                  marginTop: '0.5rem'
-                }}
-              >
-                {m.label}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Intro */}
-        <p
-          className="mt-16"
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 'clamp(1.1rem, 1.6vw, 1.45rem)',
-            lineHeight: 1.6,
-            color: FG,
-            maxWidth: 720,
-            opacity: 0.9
-          }}
-        >
-          {detail.intro}
-        </p>
-
-        {/* Highlights */}
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 md:gap-12">
-          <span
+          <a
+            href={detail.links[0].href}
+            target="_blank"
+            rel="noreferrer"
+            className="work-cta group inline-flex items-baseline gap-4"
             style={{
               fontFamily: "'DM Sans', sans-serif",
-              fontSize: '0.6rem',
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              color: MUTED,
-              paddingTop: '0.4rem'
+              fontSize: 'clamp(2.2rem, 5.5vw, 4.5rem)',
+              fontWeight: 500,
+              color: FG,
+              letterSpacing: '-0.03em',
+              lineHeight: 1
             }}
           >
-            Highlights
-          </span>
-          <ul className="flex flex-col gap-5">
+            {detail.links[0].label}
+            <span
+              className="work-cta-arrow"
+              style={{ fontSize: '0.5em', color: ACCENT }}
+            >
+              ↗
+            </span>
+          </a>
+          <div
+            style={{
+              ...KICKER,
+              marginTop: '1rem',
+              letterSpacing: '0.14em',
+              color: MUTED
+            }}
+          >
+            {detail.links[0].href.replace(/^https?:\/\//, '')}
+          </div>
+        </section>
+      )}
+
+      {/* ── Overview + Highlights: grid ancho ── */}
+      <section
+        className={`${PAD} mt-16 md:mt-24 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-14`}
+      >
+        <div className="reveal lg:col-span-5">
+          <div style={{ ...KICKER, marginBottom: '1.6rem' }}>Overview</div>
+          <p
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 'clamp(1.4rem, 2.2vw, 2.1rem)',
+              lineHeight: 1.4,
+              color: FG,
+              letterSpacing: '-0.015em'
+            }}
+          >
+            {detail.intro}
+          </p>
+        </div>
+
+        <div className="reveal lg:col-span-6 lg:col-start-7">
+          <div style={{ ...KICKER, marginBottom: '1.6rem' }}>Highlights</div>
+          <ul className="flex flex-col">
             {detail.highlights.map((h, i) => (
               <li
                 key={i}
-                className="flex items-baseline gap-4"
-                style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 'clamp(1rem, 1.4vw, 1.25rem)',
-                  color: FG,
-                  opacity: 0.88
-                }}
+                className="grid grid-cols-[auto_1fr] gap-6 md:gap-10 items-baseline"
+                style={{ paddingBlock: '1.5rem', borderTop: `1px solid ${HAIR}` }}
               >
-                <span style={{ color: ACCENT, fontSize: '0.7rem' }}>
+                <span
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    color: ACCENT
+                  }}
+                >
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                {h}
+                <span
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 'clamp(1.15rem, 1.8vw, 1.5rem)',
+                    lineHeight: 1.4,
+                    color: FG,
+                    letterSpacing: '-0.01em'
+                  }}
+                >
+                  {h}
+                </span>
               </li>
             ))}
           </ul>
         </div>
+      </section>
 
-        {/* Stack */}
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 md:gap-12">
-          <span
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: '0.6rem',
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              color: MUTED,
-              paddingTop: '0.4rem'
-            }}
-          >
-            Stack
-          </span>
-          <div className="flex flex-wrap gap-x-8 gap-y-3">
-            {detail.stack.map((s) => (
-              <span
-                key={s}
-                style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 'clamp(1rem, 1.4vw, 1.25rem)',
-                  color: FG,
-                  opacity: 0.85
-                }}
-              >
-                {s}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Links (opcional) */}
-        {detail.links && detail.links.length > 0 && (
-          <div className="mt-20 flex flex-wrap gap-6">
-            {detail.links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: '0.8rem',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  color: ACCENT,
-                  textDecoration: 'underline',
-                  textUnderlineOffset: '5px'
-                }}
-              >
-                {l.label} ↗
-              </a>
-            ))}
-          </div>
-        )}
-      </div>
+      {/* ── Stack (frontend / backend): tira meta al pie ── */}
+      <section
+        className={`reveal ${PAD} mt-16 md:mt-24 mb-20 md:mb-28 pt-10 flex flex-wrap items-start gap-x-24 gap-y-10`}
+        style={{ borderTop: `1px solid ${HAIR}` }}
+      >
+        {(
+          [
+            ['Frontend', detail.stack.frontend],
+            ['Backend', detail.stack.backend]
+          ] as const
+        )
+          .filter(([, items]) => items.length > 0)
+          .map(([label, items]) => (
+            <div key={label} className="flex flex-col gap-4">
+              <span style={KICKER}>{label}</span>
+              <div className="flex flex-wrap gap-x-6 gap-y-2 max-w-xl">
+                {items.map((s) => (
+                  <span
+                    key={s}
+                    style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: 'clamp(1.1rem, 1.6vw, 1.4rem)',
+                      color: FG,
+                      opacity: 0.9
+                    }}
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+      </section>
     </main>
   )
 }

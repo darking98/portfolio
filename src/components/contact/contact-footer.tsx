@@ -10,17 +10,16 @@ type ContactFooterProps = {
 export function ContactFooter({ winkEyeRef, onWink }: ContactFooterProps) {
   return (
     <div className="absolute bottom-0 inset-x-0 z-10 px-8 md:px-12 pb-6">
-      {/* Fila de utilidad */}
-      <div className="flex justify-between items-end mb-5 md:mb-7">
-        <div className="flex flex-col gap-1">
-          <a
-            href="mailto:me@diegogabrielrodriguez.com"
-            style={LINK}
-            className="contact-fade"
-          >
-            me@diegogabrielrodriguez.com
-          </a>
-        </div>
+      {/* Links de utilidad: anclados en la esquina inferior izquierda, sobre
+          el borde oscuro del ASCII donde contrastan (bold + blur local) */}
+      <div className="absolute left-8 md:left-12 bottom-6 z-20 flex flex-col items-start gap-2">
+        <a
+          href="mailto:me@diegogabrielrodriguez.com"
+          style={LINK}
+          className="contact-fade"
+        >
+          me@diegogabrielrodriguez.com
+        </a>
 
         <div className="flex items-center gap-5 md:gap-7">
           {SOCIALS.map((s) => (
@@ -38,8 +37,9 @@ export function ContactFooter({ winkEyeRef, onWink }: ContactFooterProps) {
         </div>
       </div>
 
-      {/* Nombre gigante (letra por letra) */}
-      <div className="flex items-end justify-between leading-[0.85] select-none">
+      {/* Nombre gigante escalonado (letra por letra) */}
+      <div className="flex flex-col items-start leading-[0.85] select-none">
+        {/* Diego */}
         <span
           style={{
             fontFamily: "'DM Sans', sans-serif",
@@ -56,9 +56,35 @@ export function ContactFooter({ winkEyeRef, onWink }: ContactFooterProps) {
             </span>
           ))}
         </span>
+
+        {/* Gabriel — desplazado a la derecha y solapado hacia arriba */}
+        <span
+          style={{
+            marginLeft: '18vw',
+            marginTop: '-0.18em',
+            fontFamily: "'Cormorant Garamond', serif",
+            fontStyle: 'italic',
+            fontSize: 'clamp(3rem, 13vw, 15rem)',
+            fontWeight: 500,
+            letterSpacing: '-0.01em',
+            color: CREAM,
+            whiteSpace: 'nowrap',
+            textShadow: '0 4px 40px rgba(0,0,0,0.55)'
+          }}
+        >
+          {'Gabriel'.split('').map((ch, i) => (
+            <span key={i} className="contact-letter inline-block">
+              {ch}
+            </span>
+          ))}
+        </span>
+
+        {/* Rodriguez — aún más a la derecha y solapado hacia arriba */}
         <span
           className="relative"
           style={{
+            marginLeft: '36vw',
+            marginTop: '-0.18em',
             fontFamily: "'Cormorant Garamond', serif",
             fontStyle: 'italic',
             fontSize: 'clamp(3rem, 13vw, 15rem)',

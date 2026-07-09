@@ -13,9 +13,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ViewTransitions>
       <html lang="en">
       <body>
-        {/* Bloquea el primer paint hasta que el Loader JS monte — evita flash del hero */}
+        {/* Bloquea el primer paint hasta que el Loader JS monte — evita flash del hero.
+            Solo en el home ('/'): el Loader (que lo remueve) únicamente monta ahí. En rutas
+            de detalle (F5 / entrada directa) no hay Loader, así que no instalamos el cover
+            o quedaría tapando la página para siempre. */}
         <script dangerouslySetInnerHTML={{ __html: `
           (function(){
+            if (location.pathname !== '/') return;
             var d = document.createElement('div');
             d.id = '__loader_cover';
             d.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#6B3040;pointer-events:none';

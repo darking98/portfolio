@@ -96,6 +96,30 @@ body::-webkit-scrollbar {
   animation: workFloat 4s ease-in-out infinite;
 }
 
+/* CTA "Visit site" del detalle de Work: color a accent + flecha que se desplaza */
+.work-cta {
+  transition: color 0.3s ease;
+}
+.work-cta:hover {
+  color: #6B3040;
+}
+.work-cta-arrow {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.work-cta:hover .work-cta-arrow {
+  transform: translate(4px, -4px);
+}
+
+/* Fade-in del "Back to work" del detalle (no morphea; entra tras el morph) */
+@keyframes coverBackIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.cover-back {
+  animation: coverBackIn 0.6s ease-out 0.68s both;
+}
+
 /* ── View Transition: el slide-up se anima por JS (onTransitionReady) ──
    Acá solo desactivamos el crossfade default y damos orden de apilado. */
 ::view-transition-group(root) {
@@ -124,6 +148,10 @@ body::-webkit-scrollbar {
   animation-duration: 0.62s;
   animation-timing-function: cubic-bezier(0.5, 0, 0.15, 1);
 }
+/* El título va SIEMPRE por encima del media durante la transición (si no, el
+   carousel full-screen del detalle lo pinta encima y el texto desaparece). */
+::view-transition-group(work-media) { z-index: 1; }
+::view-transition-group(work-title) { z-index: 2; }
 /* Que el par nombrado no haga crossfade de contenido (solo morph de caja) */
 ::view-transition-old(work-media),
 ::view-transition-new(work-media) {

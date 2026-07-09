@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react'
 
 const ACCENT = '#6B3040'
 const MUTED = '#8a7a70'
-// Paleta para secciones oscuras (Contact)
-const D_ACCENT = '#e8e0d5'
-const D_MUTED = '#9a8578'
+const WHITE = '#ffffff'
+// Paleta para secciones oscuras (Contact): inactivos en bordo
+const D_MUTED = '#6B3040'
 
 // En orden de aparición (deben existir con estos id en el DOM)
 // clickOffset (fracción de viewport) = cuánto entrar en la sección al hacer click
@@ -71,8 +71,11 @@ export default function ScrollGuide() {
     }
   }
 
-  const acc = dark ? D_ACCENT : ACCENT
   const mut = dark ? D_MUTED : MUTED
+  // Color del item activo según la sección: Experience/Skills/Contact resaltan
+  // en blanco; Work mantiene el bordo.
+  const activeColor = (i: number) =>
+    sections[i]?.id === 'work' ? ACCENT : WHITE
 
   return (
     <div
@@ -101,7 +104,7 @@ export default function ScrollGuide() {
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
                 whiteSpace: 'nowrap',
-                color: active === i ? acc : mut,
+                color: active === i ? activeColor(i) : mut,
                 opacity: active === i ? 1 : 0.55,
                 transition: 'color 0.4s ease, opacity 0.3s ease'
               }}
@@ -113,7 +116,7 @@ export default function ScrollGuide() {
                 display: 'block',
                 width: active === i ? '16px' : '7px',
                 height: '1px',
-                background: active === i ? acc : mut,
+                background: active === i ? activeColor(i) : mut,
                 transition: 'width 0.3s ease, background 0.4s ease'
               }}
             />
