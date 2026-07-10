@@ -106,7 +106,7 @@ export default function Avatar3D({
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.1
         }}
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
         style={{ background: 'transparent' }}
       >
         <ambientLight intensity={1.5} />

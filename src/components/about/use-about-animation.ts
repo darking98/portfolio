@@ -18,6 +18,9 @@ type AboutRefs = {
   linkRefs: RefObject<(SVGPathElement | null)[]>
   constRef: RefObject<HTMLDivElement | null>
   closerRef: RefObject<HTMLDivElement | null>
+  // Gate de montaje: el contenido del sticky se desmonta cuando la sección está
+  // lejos. Cuando remonta, el timeline debe reconstruirse → es dependencia.
+  mounted: boolean
 }
 
 const VW = 1920
@@ -39,10 +42,14 @@ export function useAboutAnimation({
   labelRefs,
   linkRefs,
   constRef,
-  closerRef
+  closerRef,
+  mounted
 }: AboutRefs) {
   useGSAP(
     () => {
+      // Sin contenido montado no hay nada que animar (el gate lo desmontó).
+      if (!mounted || !sectionRef.current || !skyRef.current) return
+
       // Estado inicial
       gsap.set(kickerRef.current, { autoAlpha: 0, y: 12 })
       gsap.set(skillsKickerRef.current, { autoAlpha: 0, y: 12 })
@@ -208,6 +215,6 @@ export function useAboutAnimation({
       // Cola muerta: mantiene el clímax quieto para explorar antes de Projects
       tl.to({}, { duration: 0.5 }, 3.0)
     },
-    { scope: sectionRef }
+    { scope: sectionRef, dependencies: [mounted], revertOnUpdate: true }
   )
 }

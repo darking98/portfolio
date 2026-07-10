@@ -41,7 +41,18 @@ export const projects: Project[] = [
     title: 'Portfolio v2',
     kind: 'Portfolio · Personal',
     year: '2026',
-    hue: ['#7a4a30', '#2a1a14']
+    hue: ['#7a4a30', '#2a1a14'],
+    video: '/projects/portfolio/portfolio-1.webm',
+    gallery: [
+      '/projects/portfolio/portfolio-1.webm',
+      '/projects/portfolio/portfolio-2.webm',
+      '/projects/portfolio/portfolio-1.png',
+      '/projects/portfolio/portfolio-2.png',
+      '/projects/portfolio/portfolio-3.png',
+      '/projects/portfolio/portfolio-4.png',
+      '/projects/portfolio/portfolio-5.png',
+      '/projects/portfolio/portfolio-6.png'
+    ]
   }
 ]
 
@@ -130,6 +141,12 @@ export const PROJECT_DETAILS: Record<string, ProjectDetail> = {
         'Vercel'
       ],
       backend: []
-    }
+    },
+    links: [
+      {
+        label: 'View repository',
+        href: 'https://github.com/darking98/portfolio'
+      }
+    ]
   }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useState, useEffect } from 'react'
 import { gsap } from 'gsap'
 import { useTransitionRouter } from 'next-view-transitions'
 import { LABEL } from './constants'
@@ -31,6 +31,24 @@ export default function About() {
   const constRef = useRef<HTMLDivElement>(null)
   const closerRef = useRef<HTMLDivElement>(null)
   const travelling = useRef(false)
+
+  // Gate de montaje: el contenido pesado del sticky (starfield + constelaciones
+  // + ~7k nodos) se desmonta cuando la sección está LEJOS del viewport, para no
+  // retener DOM/canvas mientras mirás Hero o Contact. La <section> de 420vh
+  // sigue montada siempre → el scroll y su altura no se rompen. rootMargin
+  // amplio (150%) remonta ~1.5 viewports antes de verse, con margen de sobra
+  // para que el timeline (dependiente de `mounted`) se reconstruya sin salto.
+  const [mounted, setMounted] = useState(true)
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([e]) => setMounted(e.isIntersecting),
+      { rootMargin: '150% 0px 150% 0px' }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   // Click en una estrella-experiencia → warp hacia ella → detalle.
   const onStarClick = useCallback(
@@ -79,7 +97,8 @@ export default function About() {
     labelRefs,
     linkRefs,
     constRef,
-    closerRef
+    closerRef,
+    mounted
   })
 
   return (
@@ -90,62 +109,70 @@ export default function About() {
       style={{ height: '420vh', marginTop: '-100vh' }}
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {/* Cielo que asciende: overlay oscuro que gana opacidad a lo largo de la
-            sección (pastel del Hero → espacio del clímax). Sin corte. */}
-        <div
-          ref={skyRef}
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            zIndex: 0,
-            opacity: 0,
-            background: `radial-gradient(ellipse 120% 100% at 50% 40%, #17111f 0%, ${SPACE_BG} 72%)`
-          }}
-        />
+        {/* Contenido pesado: solo montado cuando la sección está cerca del
+            viewport (gate `mounted`). Fuera de rango se desmonta → no retiene
+            starfield/constelaciones. El timeline se reconstruye al remontar
+            porque `mounted` es dependencia de useAboutAnimation. */}
+        {mounted && (
+          <>
+            {/* Cielo que asciende: overlay oscuro que gana opacidad a lo largo de
+                la sección (pastel del Hero → espacio del clímax). Sin corte. */}
+            <div
+              ref={skyRef}
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                zIndex: 0,
+                opacity: 0,
+                background: `radial-gradient(ellipse 120% 100% at 50% 40%, #17111f 0%, ${SPACE_BG} 72%)`
+              }}
+            />
 
-        {/* Starfield global: aparece durante el ascenso y queda en el clímax */}
-        <div
-          ref={starfieldRef}
-          className="absolute inset-0 pointer-events-none"
-          style={{ zIndex: 1, opacity: 0 }}
-        >
-          <Starfield ref={starfieldApi} />
-        </div>
+            {/* Starfield global: aparece durante el ascenso y queda en el clímax */}
+            <div
+              ref={starfieldRef}
+              className="absolute inset-0 pointer-events-none"
+              style={{ zIndex: 1, opacity: 0 }}
+            >
+              <Starfield ref={starfieldApi} />
+            </div>
 
-        {/* Kicker — Experience (Acto 2) */}
-        <div
-          ref={kickerRef}
-          className="absolute top-[16vh] left-10 md:left-20"
-          style={{ zIndex: 4 }}
-        >
-          <span style={{ ...LABEL, color: '#c9a9b3', opacity: 0.9 }}>
-            {KICKER}
-          </span>
-        </div>
+            {/* Kicker — Experience (Acto 2) */}
+            <div
+              ref={kickerRef}
+              className="absolute top-[16vh] left-10 md:left-20"
+              style={{ zIndex: 4 }}
+            >
+              <span style={{ ...LABEL, color: '#c9a9b3', opacity: 0.9 }}>
+                {KICKER}
+              </span>
+            </div>
 
-        {/* Kicker — Skills (Acto 3). Entra con la constelación; lo anima GSAP. */}
-        <div
-          ref={skillsKickerRef}
-          className="absolute top-[16vh] left-10 md:left-20"
-          style={{ zIndex: 4 }}
-        >
-          <span style={{ ...LABEL, color: '#c9a9b3', opacity: 0.9 }}>
-            {KICKER_SKILLS}
-          </span>
-        </div>
+            {/* Kicker — Skills (Acto 3). Entra con la constelación; lo anima GSAP. */}
+            <div
+              ref={skillsKickerRef}
+              className="absolute top-[16vh] left-10 md:left-20"
+              style={{ zIndex: 4 }}
+            >
+              <span style={{ ...LABEL, color: '#c9a9b3', opacity: 0.9 }}>
+                {KICKER_SKILLS}
+              </span>
+            </div>
 
-        {/* Acto 2 — constelación naciente (experiencias) */}
-        <Trajectory
-          wrapRef={trajectoryRef}
-          starRefs={starRefs}
-          labelRefs={labelRefs}
-          linkRefs={linkRefs}
-          svgRef={svgRef}
-          onStarClick={onStarClick}
-        />
+            {/* Acto 2 — constelación naciente (experiencias) */}
+            <Trajectory
+              wrapRef={trajectoryRef}
+              starRefs={starRefs}
+              labelRefs={labelRefs}
+              linkRefs={linkRefs}
+              svgRef={svgRef}
+              onStarClick={onStarClick}
+            />
 
-        {/* Acto 3 — constelaciones de skills interactivas */}
-        <Constellation constRef={constRef} />
-        <Closer closerRef={closerRef} />
+            {/* Acto 3 — constelaciones de skills interactivas */}
+            <Constellation constRef={constRef} />
+            <Closer closerRef={closerRef} />
+          </>
+        )}
       </div>
 
       {/* Anclas de scroll para el nav (Experience = inicio; Skills = donde
