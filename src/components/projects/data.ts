@@ -34,7 +34,18 @@ export const projects: Project[] = [
     title: 'Plmboxd',
     kind: 'Streaming · Social',
     year: '2026',
-    hue: ['#b07050', '#6B3040']
+    hue: ['#b07050', '#6B3040'],
+    video: '/projects/plmboxd/plmboxd-1.webm',
+    gallery: [
+      '/projects/plmboxd/plmboxd-1.webm',
+      '/projects/plmboxd/plmboxd-2.webm',
+      '/projects/plmboxd/plmboxd-1.png',
+      '/projects/plmboxd/plmboxd-2.png',
+      '/projects/plmboxd/plmboxd-3.png',
+      '/projects/plmboxd/plmboxd-4.png',
+      '/projects/plmboxd/plmboxd-5.png',
+      '/projects/plmboxd/plmboxd-6.png'
+    ]
   },
   {
     slug: 'portfolio-v2',

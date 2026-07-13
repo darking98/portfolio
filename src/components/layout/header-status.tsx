@@ -1,12 +1,31 @@
 import { LABEL } from './constants'
 
-// Reloj + ubicación + indicador de disponibilidad (bloque izquierdo del header)
-export function HeaderStatus({ time }: { time: string }) {
+// Reloj + ubicación + indicador de disponibilidad (bloque izquierdo del header).
+// `dark`: sobre fondo oscuro (espacio de Skills / Contact en mobile) aclara el
+// texto para que contraste.
+export function HeaderStatus({
+  time,
+  dark = false
+}: {
+  time: string
+  dark?: boolean
+}) {
+  const label: React.CSSProperties = dark
+    ? { ...LABEL, color: '#c9bcae', transition: 'color 0.4s ease' }
+    : { ...LABEL, transition: 'color 0.4s ease' }
+  const dot: React.CSSProperties = { ...label, color: dark ? '#8a7d6f' : '#b0a090' }
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-      <span style={LABEL}>{time}</span>
-      <span style={{ ...LABEL, color: '#b0a090' }}>·</span>
-      <span style={LABEL}>Buenos Aires</span>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '0.5rem 1rem'
+      }}
+    >
+      <span style={label}>{time}</span>
+      <span style={dot}>·</span>
+      <span style={label}>Buenos Aires</span>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <span
           style={{
@@ -19,7 +38,7 @@ export function HeaderStatus({ time }: { time: string }) {
             animation: 'availablePulse 2.4s ease-in-out infinite'
           }}
         />
-        <span style={LABEL}>Available for work</span>
+        <span style={label}>Available for work</span>
       </div>
     </div>
   )

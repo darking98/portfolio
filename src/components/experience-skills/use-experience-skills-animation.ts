@@ -6,7 +6,7 @@ import { STATIONS, CLUSTERS } from './data'
 
 gsap.registerPlugin(ScrollTrigger)
 
-type AboutRefs = {
+type ExperienceSkillsRefs = {
   sectionRef: RefObject<HTMLElement | null>
   kickerRef: RefObject<HTMLDivElement | null>
   skillsKickerRef: RefObject<HTMLDivElement | null>
@@ -21,17 +21,27 @@ type AboutRefs = {
   // Gate de montaje: el contenido del sticky se desmonta cuando la sección está
   // lejos. Cuando remonta, el timeline debe reconstruirse → es dependencia.
   mounted: boolean
+  // Portrait/mobile: usar coords xM/yM (columna zigzag) en el morph a skills.
+  vertical: boolean
 }
 
 const VW = 1920
 const VH = 1000
+
+// Coords activas (horizontal vs columna zigzag mobile) para estación o cluster.
+function ax<T extends { x: number; xM: number }>(o: T, vertical: boolean) {
+  return vertical ? o.xM : o.x
+}
+function ay<T extends { y: number; yM: number }>(o: T, vertical: boolean) {
+  return vertical ? o.yM : o.y
+}
 
 // Timeline total = 3.6 unidades. Un solo arco:
 //   Ascenso  [0.0 → 2.4]  el cielo oscurece + starfield aparece (pastel→espacio)
 //   Naciente [0.2 → 2.1]  las 4 estrellas-experiencia se encienden y conectan
 //   Morph    [2.1 → 2.7]  las estrellas fluyen hacia las constelaciones de skills
 //   Clímax   [2.5 → 3.6]  constelaciones interactivas + closer
-export function useAboutAnimation({
+export function useExperienceSkillsAnimation({
   sectionRef,
   kickerRef,
   skillsKickerRef,
@@ -43,8 +53,9 @@ export function useAboutAnimation({
   linkRefs,
   constRef,
   closerRef,
-  mounted
-}: AboutRefs) {
+  mounted,
+  vertical
+}: ExperienceSkillsRefs) {
   useGSAP(
     () => {
       // Sin contenido montado no hay nada que animar (el gate lo desmontó).
@@ -174,11 +185,17 @@ export function useAboutAnimation({
       STATIONS.forEach((s, i) => {
         const el = starRefs.current[i]
         if (!el) return
+        // dx/dy en las coords activas (horizontal vs zigzag) → aterrizan EXACTO
+        // sobre el nodo-madre del cluster en el layout vigente.
+        const sx = ax(s, vertical)
+        const sy = ay(s, vertical)
+        const dx = ax(dest[i], vertical)
+        const dy = ay(dest[i], vertical)
         tl.to(
           el,
           {
-            x: () => ((dest[i].x - s.x) / VW) * window.innerWidth,
-            y: () => ((dest[i].y - s.y) / VH) * window.innerHeight,
+            x: () => ((dx - sx) / VW) * window.innerWidth,
+            y: () => ((dy - sy) / VH) * window.innerHeight,
             scale: 1.4,
             duration: 0.6,
             ease: 'power2.inOut'
@@ -215,6 +232,6 @@ export function useAboutAnimation({
       // Cola muerta: mantiene el clímax quieto para explorar antes de Projects
       tl.to({}, { duration: 0.5 }, 3.0)
     },
-    { scope: sectionRef, dependencies: [mounted], revertOnUpdate: true }
+    { scope: sectionRef, dependencies: [mounted, vertical], revertOnUpdate: true }
   )
 }

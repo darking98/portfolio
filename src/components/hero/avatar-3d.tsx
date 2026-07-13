@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, Suspense, useEffect, useMemo } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { INITIAL_Z } from './constants'
@@ -9,12 +9,27 @@ import { INITIAL_Z } from './constants'
 interface ModelProps {
   onLoaded?: () => void
   cameraZRef?: { current: number }
+  portrait?: boolean
 }
 
-function Model({ onLoaded, cameraZRef }: ModelProps) {
+function Model({ onLoaded, cameraZRef, portrait = false }: ModelProps) {
   const { scene } = useGLTF('/avatar.glb')
   const groupRef = useRef<THREE.Group>(null)
   const targetRot = useRef({ x: 0, y: 0 })
+  const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera
+
+  // Reencuadre por orientación aplicado imperativamente (NO recreamos el Canvas
+  // con `key`: eso destruiría el contexto WebGL y re-subiría los 85MB — mina #6).
+  // La cámara mira al origen; en landscape se ubica en X=1.5 (encuadre en
+  // ángulo). En portrait la centramos en X=0 (frontal) y abrimos el FOV para que
+  // el modelo, más alto que ancho, entre completo y quede centrado en pantalla.
+  // useEffect corre al montar Model (post-Suspense) y en cada cambio de portrait.
+  useEffect(() => {
+    camera.position.x = portrait ? 0 : 1.5
+    camera.fov = portrait ? 46 : 30
+    camera.lookAt(0, 0, 0)
+    camera.updateProjectionMatrix()
+  }, [camera, portrait])
 
   const { modelScale, modelPosition } = useMemo(() => {
     scene.updateMatrixWorld(true)
@@ -24,15 +39,18 @@ function Model({ onLoaded, cameraZRef }: ModelProps) {
     box.getSize(size)
     box.getCenter(center)
     const s = 2 / size.y
+    // En portrait bajamos el modelo un poco más: pegado al top se notaba el
+    // corte de la gorra contra el header. -0.15 es el offset base (landscape).
+    const yOffset = portrait ? -0.5 : -0.15
     return {
       modelScale: s,
       modelPosition: new THREE.Vector3(
         -center.x * s,
-        -center.y * s - 0.15,
+        -center.y * s + yOffset,
         -center.z * s
       )
     }
-  }, [scene])
+  }, [scene, portrait])
 
   useEffect(() => {
     scene.traverse((child) => {
@@ -89,12 +107,16 @@ useGLTF.preload('/avatar.glb')
 export default function Avatar3D({
   onLoaded,
   cameraZRef,
-  paused = false
+  paused = false,
+  portrait = false
 }: {
   onLoaded?: () => void
   cameraZRef?: { current: number }
   paused?: boolean
+  portrait?: boolean
 }) {
+  // El encuadre inicial usa los valores landscape; Model lo reajusta a portrait
+  // imperativamente vía useThree (sin recrear el Canvas — mina #6).
   return (
     <div className="w-full h-full">
       <Canvas
@@ -114,7 +136,7 @@ export default function Avatar3D({
         <directionalLight position={[-2, 1, -1]} intensity={0.4} />
 
         <Suspense fallback={null}>
-          <Model onLoaded={onLoaded} cameraZRef={cameraZRef} />
+          <Model onLoaded={onLoaded} cameraZRef={cameraZRef} portrait={portrait} />
         </Suspense>
       </Canvas>
     </div>

@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useViewport } from '@/hooks/useViewport'
+import { useDarkBackdrop } from '@/hooks/useDarkBackdrop'
 
 const ACCENT = '#6B3040'
 const MUTED = '#8a7a70'
@@ -22,9 +24,12 @@ interface Lenis {
 }
 
 export default function ScrollGuide() {
+  const { isMobile } = useViewport()
   const [visible, setVisible] = useState(false)
   const [active, setActive] = useState(-1)
-  const [dark, setDark] = useState(false)
+  // La guía está centrada verticalmente → sonda el fondo a 50% del viewport.
+  // Hook compartido con el Header (fondo adaptativo por scroll).
+  const dark = useDarkBackdrop(0.5)
 
   useEffect(() => {
     const update = () => {
@@ -40,13 +45,6 @@ export default function ScrollGuide() {
         if (top <= vh * 0.5) idx = i
       })
       setActive(idx)
-
-      // ¿La guía está sobre la sección oscura (Contact)?
-      const contact = document.getElementById('contact')
-      if (contact) {
-        const r = contact.getBoundingClientRect()
-        setDark(r.top <= vh * 0.5 && r.bottom >= vh * 0.5)
-      }
     }
 
     update()
@@ -71,6 +69,11 @@ export default function ScrollGuide() {
     }
   }
 
+  // En mobile el nav ya vive en el header (arriba) → el ScrollGuide vertical es
+  // redundante y se superponía con la constelación. Todos los hooks corrieron
+  // arriba, así que este return no rompe las reglas de hooks.
+  if (isMobile) return null
+
   const mut = dark ? D_MUTED : MUTED
   // Color del item activo según la sección: Experience/Skills/Contact resaltan
   // en blanco; Work mantiene el bordo.
@@ -80,7 +83,11 @@ export default function ScrollGuide() {
   return (
     <div
       className="fixed right-8 top-1/2 -translate-y-1/2 z-40"
-      style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.6s ease' }}
+      style={{
+        opacity: visible ? 1 : 0,
+        pointerEvents: visible ? 'auto' : 'none',
+        transition: 'opacity 0.6s ease'
+      }}
     >
       {/* Línea vertical */}
       <div

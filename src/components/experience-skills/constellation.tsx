@@ -4,6 +4,9 @@ import { CLUSTERS, type ClusterId, type Cluster } from './data'
 
 type Props = {
   constRef: RefObject<HTMLDivElement | null>
+  // Portrait/mobile: nodos-madre en coords xM/yM (columna) — coinciden con el
+  // destino del morph de las estrellas-experiencia.
+  vertical: boolean
 }
 
 const VW = 1920
@@ -46,7 +49,7 @@ function pct(x: number, y: number) {
   return { left: `${(x / VW) * 100}%`, top: `${(y / VH) * 100}%` }
 }
 
-export function Constellation({ constRef }: Props) {
+export function Constellation({ constRef, vertical }: Props) {
   const [active, setActive] = useState<ClusterId | null>(null)
   const layerRef = useRef<HTMLDivElement>(null)
 
@@ -93,7 +96,7 @@ export function Constellation({ constRef }: Props) {
       window.removeEventListener('mousemove', onMove)
       if (raf) cancelAnimationFrame(raf)
       // Mata los tweens quickTo (siguen vivos en el ticker global de GSAP si no
-      // se limpian → fuga de memoria al remontar About).
+      // se limpian → fuga de memoria al remontar Experience/Skills).
       gsap.killTweensOf(layer)
       depthEls.forEach((el) => gsap.killTweensOf(el))
     }
@@ -133,6 +136,7 @@ export function Constellation({ constRef }: Props) {
               isActive={isActive}
               dimmed={dimmed}
               orbit={orbits[c.id]}
+              vertical={vertical}
               onOpen={() => setActive(c.id)}
               onCollapse={() => setActive(null)}
             />
@@ -148,6 +152,7 @@ function ClusterView({
   isActive,
   dimmed,
   orbit,
+  vertical,
   onOpen,
   onCollapse
 }: {
@@ -155,6 +160,7 @@ function ClusterView({
   isActive: boolean
   dimmed: boolean
   orbit: { dx: number; dy: number; r: number }[]
+  vertical: boolean
   onOpen: () => void
   onCollapse: () => void
 }) {
@@ -162,7 +168,7 @@ function ClusterView({
   const starColor = isAI ? STAR_AI : STAR
 
   const clusterStyle: React.CSSProperties = {
-    ...pct(cluster.x, cluster.y),
+    ...pct(vertical ? cluster.xM : cluster.x, vertical ? cluster.yM : cluster.y),
     transform: `translate(-50%, -50%) scale(${dimmed ? 0.82 : 1})`,
     opacity: dimmed ? 0.32 : 1,
     transition:
@@ -278,7 +284,7 @@ function ClusterView({
           }}
         >
           <span
-            className="about-pulse absolute inset-0 rounded-full"
+            className="station-pulse absolute inset-0 rounded-full"
             style={{ boxShadow: `0 0 0 0 ${starColor}` }}
           />
         </span>

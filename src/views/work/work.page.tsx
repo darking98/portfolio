@@ -7,7 +7,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import type { Project, ProjectDetail } from '@/components/projects/data'
 import { sharedMorphBack } from '@/lib/transition'
-import { useScrollTop } from '@/lib/useScrollTop'
+import { useScrollTop } from '@/hooks/useScrollTop'
 import { setWorkReturn } from '@/lib/workReturn'
 import { ProjectCover } from './project-cover'
 

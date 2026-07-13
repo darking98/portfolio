@@ -3,15 +3,22 @@ import { CLOSER } from './data'
 
 type Props = {
   closerRef: RefObject<HTMLDivElement | null>
+  // Portrait/mobile: baja el cierre para separarlo de la estrella Frontend
+  // (que en columna queda cerca del fondo). Centrado en vez de a la izquierda.
+  vertical: boolean
 }
 
 // Cierre cinético (toque de B): frase corta que se ensambla al final y hace de
 // puente hacia Projects. Va sobre el fondo oscuro del Acto 3 → paleta clara.
-export function Closer({ closerRef }: Props) {
+export function Closer({ closerRef, vertical }: Props) {
   return (
     <div
       ref={closerRef}
-      className="absolute bottom-[14vh] left-10 md:left-20"
+      className={
+        vertical
+          ? 'absolute bottom-[5vh] left-0 right-0 px-6 text-center'
+          : 'absolute bottom-[14vh] left-10 md:left-20'
+      }
       style={{ zIndex: 6, willChange: 'transform, opacity' }}
     >
       <div

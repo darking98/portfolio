@@ -9,14 +9,19 @@ import { Starfield, type StarfieldHandle } from './starfield'
 import { Constellation } from './constellation'
 import { Closer } from './closer'
 import { KICKER, KICKER_SKILLS, type Station } from './data'
-import { useAboutAnimation } from './use-about-animation'
+import { useExperienceSkillsAnimation } from './use-experience-skills-animation'
 import { warpIn } from '@/lib/transition'
 import { saveScroll } from '@/lib/scrollStore'
+import { useViewport } from '@/hooks/useViewport'
 
 const SPACE_BG = '#0d0a12'
 
-export default function About() {
+export default function ExperienceSkills() {
   const router = useTransitionRouter()
+  const { isMobile, isPortrait } = useViewport()
+  // En portrait/mobile la constelación horizontal se reorganiza en columna
+  // ascendente zigzag (coords xM/yM de la data).
+  const vertical = isMobile || isPortrait
   const sectionRef = useRef<HTMLElement>(null)
   const kickerRef = useRef<HTMLDivElement>(null)
   const skillsKickerRef = useRef<HTMLDivElement>(null)
@@ -65,16 +70,21 @@ export default function About() {
 
       // Ocultá todo lo demás (texto, líneas, otras experiencias, kicker) para
       // que solo se vea el viaje de estrellas. El starfield queda visible.
-      gsap.to(
-        [
-          kickerRef.current,
-          skillsKickerRef.current,
-          trajectoryRef.current,
-          constRef.current,
-          closerRef.current
-        ],
-        { opacity: 0, duration: 0.3, ease: 'power2.in', overwrite: true }
-      )
+      // Filtrar null: en mobile los kickers no se renderizan → sus refs son null,
+      // y GSAP con un null en el array de targets tira "cannot read _gsap".
+      const toHide = [
+        kickerRef.current,
+        skillsKickerRef.current,
+        trajectoryRef.current,
+        constRef.current,
+        closerRef.current
+      ].filter(Boolean)
+      gsap.to(toHide, {
+        opacity: 0,
+        duration: 0.3,
+        ease: 'power2.in',
+        overwrite: true
+      })
 
       // Líneas de velocidad radiando desde la estrella; al llegar al pico navega.
       await starfieldApi.current?.warp(cx, cy)
@@ -86,7 +96,7 @@ export default function About() {
     [router]
   )
 
-  useAboutAnimation({
+  useExperienceSkillsAnimation({
     sectionRef,
     kickerRef,
     skillsKickerRef,
@@ -98,12 +108,13 @@ export default function About() {
     linkRefs,
     constRef,
     closerRef,
-    mounted
+    mounted,
+    vertical
   })
 
   return (
     <section
-      id="about"
+      id="experience-skills"
       ref={sectionRef}
       className="relative w-full"
       style={{ height: '420vh', marginTop: '-100vh' }}
@@ -112,7 +123,7 @@ export default function About() {
         {/* Contenido pesado: solo montado cuando la sección está cerca del
             viewport (gate `mounted`). Fuera de rango se desmonta → no retiene
             starfield/constelaciones. El timeline se reconstruye al remontar
-            porque `mounted` es dependencia de useAboutAnimation. */}
+            porque `mounted` es dependencia de useExperienceSkillsAnimation. */}
         {mounted && (
           <>
             {/* Cielo que asciende: overlay oscuro que gana opacidad a lo largo de
@@ -136,27 +147,34 @@ export default function About() {
               <Starfield ref={starfieldApi} />
             </div>
 
-            {/* Kicker — Experience (Acto 2) */}
-            <div
-              ref={kickerRef}
-              className="absolute top-[16vh] left-10 md:left-20"
-              style={{ zIndex: 4 }}
-            >
-              <span style={{ ...LABEL, color: '#c9a9b3', opacity: 0.9 }}>
-                {KICKER}
-              </span>
-            </div>
+            {/* Kickers (01 Experience / 02 Skills). Ocultos en mobile: se
+                superponían con los labels de la constelación apilada. Los refs
+                quedan null → los gsap.set/tl.to sobre ellos son no-ops seguros. */}
+            {!vertical && (
+              <>
+                {/* Kicker — Experience (Acto 2) */}
+                <div
+                  ref={kickerRef}
+                  className="absolute top-[16vh] left-10 md:left-20"
+                  style={{ zIndex: 4 }}
+                >
+                  <span style={{ ...LABEL, color: '#c9a9b3', opacity: 0.9 }}>
+                    {KICKER}
+                  </span>
+                </div>
 
-            {/* Kicker — Skills (Acto 3). Entra con la constelación; lo anima GSAP. */}
-            <div
-              ref={skillsKickerRef}
-              className="absolute top-[16vh] left-10 md:left-20"
-              style={{ zIndex: 4 }}
-            >
-              <span style={{ ...LABEL, color: '#c9a9b3', opacity: 0.9 }}>
-                {KICKER_SKILLS}
-              </span>
-            </div>
+                {/* Kicker — Skills (Acto 3). Entra con la constelación; lo anima GSAP. */}
+                <div
+                  ref={skillsKickerRef}
+                  className="absolute top-[16vh] left-10 md:left-20"
+                  style={{ zIndex: 4 }}
+                >
+                  <span style={{ ...LABEL, color: '#c9a9b3', opacity: 0.9 }}>
+                    {KICKER_SKILLS}
+                  </span>
+                </div>
+              </>
+            )}
 
             {/* Acto 2 — constelación naciente (experiencias) */}
             <Trajectory
@@ -166,11 +184,12 @@ export default function About() {
               linkRefs={linkRefs}
               svgRef={svgRef}
               onStarClick={onStarClick}
+              vertical={vertical}
             />
 
             {/* Acto 3 — constelaciones de skills interactivas */}
-            <Constellation constRef={constRef} />
-            <Closer closerRef={closerRef} />
+            <Constellation constRef={constRef} vertical={vertical} />
+            <Closer closerRef={closerRef} vertical={vertical} />
           </>
         )}
       </div>

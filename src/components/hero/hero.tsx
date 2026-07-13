@@ -4,8 +4,25 @@ import { useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { INITIAL_Z, NAME_SIZE, NAME_COLOR, NAME_OPACITY } from './constants'
 import { useHeroAnimation } from './use-hero-animation'
+import { useViewport } from '@/hooks/useViewport'
 
 const Avatar3D = dynamic(() => import('./avatar-3d'), { ssr: false })
+
+const nameStyle = {
+  fontFamily: "'DM Sans', sans-serif",
+  fontSize: NAME_SIZE,
+  color: NAME_COLOR,
+  fontWeight: 500,
+  letterSpacing: '-0.03em',
+  opacity: NAME_OPACITY,
+} as const
+
+// Portrait/mobile: nombre más grande que en el clamp desktop para que "Gabriel"
+// y "Rodriguez" sean más anchos que la cabeza del avatar y asomen a los lados.
+const stackedNameStyle = {
+  ...nameStyle,
+  fontSize: 'clamp(3.75rem, 20vw, 9rem)',
+} as const
 
 export default function Hero({
   ready,
@@ -29,8 +46,15 @@ export default function Hero({
   // geometría a GPU produce un hitch notable al volver.
   const [pastHero, setPastHero] = useState(false)
 
+  const { isMobile, isPortrait, isTouch } = useViewport()
+  // En portrait apilamos los nombres verticalmente; en landscape/desktop van a
+  // los lados. `stacked` gobierna tanto el layout CSS como los targets de GSAP.
+  const stacked = isMobile || isPortrait
+
   useHeroAnimation({
     ready,
+    stacked,
+    isTouch,
     sectionRef,
     namesRef,
     firstNameRef,
@@ -51,71 +75,74 @@ export default function Hero({
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <div ref={namesRef} className="absolute inset-0 pointer-events-none">
-          {/* Diego · Rodriguez */}
-          <div
-            className="uppercase absolute inset-0 flex items-center"
-            style={{ zIndex: 10 }}
-          >
+          {stacked ? (
+            /* ── Portrait/mobile: los 3 nombres apilados a la altura de la cara ──
+               Centrado vertical (donde está la cabeza del avatar) para que el
+               texto cruce por detrás y asome a los lados. Las 3 líneas comparten
+               borde izquierdo (items-start), el bloque se centra en el viewport.
+               GSAP anima cada línea (ver use-hero-animation stacked branch).
+               key="stacked": fuerza a React a montar este árbol desde cero al
+               cambiar de layout, en vez de reusar los nodos del branch desktop
+               (que arrastraban los estilos inline de GSAP: opacity:0 / translate). */
             <div
-              ref={firstNameRef}
-              className="flex-1 flex justify-end select-none"
+              key="stacked"
+              className="absolute inset-0 flex flex-col items-center justify-center uppercase"
+              style={{ zIndex: 10 }}
             >
-              <span
-                className="leading-none"
-                style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: NAME_SIZE,
-                  color: NAME_COLOR,
-                  fontWeight: 500,
-                  letterSpacing: '-0.03em',
-                  opacity: NAME_OPACITY
-                }}
-              >
-                Diego
-              </span>
+              <div className="flex flex-col items-start gap-[0.02em] w-max">
+                <div ref={firstNameRef} className="select-none">
+                  <span className="leading-[0.9]" style={stackedNameStyle}>Diego</span>
+                </div>
+                <div ref={middleNameRef} className="select-none">
+                  <span
+                    className="leading-[0.9]"
+                    style={{ ...stackedNameStyle, whiteSpace: 'nowrap' }}
+                  >
+                    Gabriel
+                  </span>
+                </div>
+                <div ref={lastNameRef} className="select-none">
+                  <span className="leading-[0.9]" style={stackedNameStyle}>Rodriguez</span>
+                </div>
+              </div>
             </div>
-            <div
-              ref={lastNameRef}
-              className="flex-1 flex justify-start select-none"
-              style={{ marginLeft: '-2vw' }}
-            >
-              <span
-                className="leading-none"
-                style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: NAME_SIZE,
-                  color: NAME_COLOR,
-                  fontWeight: 500,
-                  letterSpacing: '-0.03em',
-                  opacity: NAME_OPACITY
-                }}
+          ) : (
+            <div key="wide" className="contents">
+              {/* Diego · Rodriguez a los lados */}
+              <div
+                className="uppercase absolute inset-0 flex items-center"
+                style={{ zIndex: 10 }}
               >
-                Rodriguez
-              </span>
-            </div>
-          </div>
+                <div
+                  ref={firstNameRef}
+                  className="flex-1 flex justify-end select-none"
+                >
+                  <span className="leading-none" style={nameStyle}>Diego</span>
+                </div>
+                <div
+                  ref={lastNameRef}
+                  className="flex-1 flex justify-start select-none"
+                  style={{ marginLeft: '-2vw' }}
+                >
+                  <span className="leading-none" style={nameStyle}>Rodriguez</span>
+                </div>
+              </div>
 
-          {/* Gabriel */}
-          <div
-            ref={middleNameRef}
-            className="absolute uppercase inset-0 flex items-center justify-center pointer-events-none select-none"
-            style={{ zIndex: 15 }}
-          >
-            <span
-              className="leading-none"
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: NAME_SIZE,
-                color: NAME_COLOR,
-                fontWeight: 500,
-                letterSpacing: '-0.03em',
-                opacity: NAME_OPACITY,
-                whiteSpace: 'nowrap'
-              }}
-            >
-              Gabriel
-            </span>
-          </div>
+              {/* Gabriel centrado */}
+              <div
+                ref={middleNameRef}
+                className="absolute uppercase inset-0 flex items-center justify-center pointer-events-none select-none"
+                style={{ zIndex: 15 }}
+              >
+                <span
+                  className="leading-none"
+                  style={{ ...nameStyle, whiteSpace: 'nowrap' }}
+                >
+                  Gabriel
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Avatar 3D */}
@@ -129,6 +156,7 @@ export default function Hero({
               onLoaded={onAvatarLoaded}
               cameraZRef={cameraZRef}
               paused={pastHero}
+              portrait={isPortrait}
             />
           </div>
         </div>
@@ -136,13 +164,13 @@ export default function Hero({
         {/* Tagline */}
         <div
           ref={taglineRef}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-none select-none whitespace-nowrap"
+          className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 pointer-events-none select-none w-full px-6 text-center"
           style={{ zIndex: 25 }}
         >
           <span
             style={{
               fontFamily: "'DM Sans', sans-serif",
-              fontSize: '0.7rem',
+              fontSize: 'clamp(0.6rem, 2.6vw, 0.7rem)',
               letterSpacing: '0.22em',
               textTransform: 'uppercase',
               color: '#8a7a70'
@@ -150,7 +178,7 @@ export default function Hero({
           >
             AI Full Stack Engineer
             <span style={{ color: '#6B3040', margin: '0 0.6em' }}>—</span>
-            Scalable & High-Impact UX
+            Scalable &amp; High-Impact UX
           </span>
         </div>
       </div>

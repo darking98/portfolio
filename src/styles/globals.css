@@ -1,6 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
 @import "tailwindcss";
 
+/* Breakpoints canónicos — espejados en src/hooks/useViewport.ts (BREAKPOINTS).
+   Tailwind es mobile-first: `md:` aplica ≥768 (tablet+), `lg:` aplica ≥1024
+   (desktop, el diseño original). Sin prefijo = mobile. */
+@theme {
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+}
+
 :root {
   --bg: #e8e0d5;
   --fg: #e8e2d9;
@@ -62,14 +70,14 @@ body::-webkit-scrollbar {
   100% { box-shadow: 0 0 0 0 rgba(125, 155, 106, 0); }
 }
 
-/* Pulso de los nodos de estación del About (accent maroon) */
-@keyframes aboutStationPulse {
+/* Pulso de los nodos de estación de Experience/Skills (accent maroon) */
+@keyframes stationPulse {
   0%   { box-shadow: 0 0 0 0 rgba(107, 48, 64, 0.5); }
   70%  { box-shadow: 0 0 0 10px rgba(107, 48, 64, 0); }
   100% { box-shadow: 0 0 0 0 rgba(107, 48, 64, 0); }
 }
-.about-pulse {
-  animation: aboutStationPulse 2.4s ease-out infinite;
+.station-pulse {
+  animation: stationPulse 2.4s ease-out infinite;
 }
 
 /* Preview generativo de Work: shimmer + barras que "respiran" */

@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Hero from '@/components/hero/hero'
 import Header from '@/components/layout/header'
-import About from '@/components/about/about'
+import ExperienceSkills from '@/components/experience-skills/experience-skills'
 import Projects from '@/components/projects/projects'
 import Contact from '@/components/contact/contact'
 import ScrollGuide from '@/components/layout/scroll-guide'
@@ -19,6 +19,14 @@ const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : use
 // Persiste entre navegaciones (SPA); se resetea solo en un reload completo.
 let hasLoaded = false
 
+// Bypass del loader para iterar/testear (ej. Playwright): `?nointro` salta la
+// intro y muestra el Hero directo. Se aplica en un efecto (no en el render
+// inicial) para no romper la hidratación SSR.
+function readSkipIntro() {
+  if (typeof window === 'undefined') return false
+  return new URLSearchParams(window.location.search).has('nointro')
+}
+
 interface Lenis {
   scrollTo: (t: number, o?: object) => void
   resize: () => void
@@ -28,6 +36,15 @@ export default function Home() {
   const [heroReady,  setHeroReady]  = useState(hasLoaded)
   const [loaderDone, setLoaderDone] = useState(hasLoaded)
   const loaderResumeRef = useRef<(() => void) | null>(null)
+
+  // Bypass del loader (?nointro) aplicado tras montar → sin mismatch de SSR.
+  useEffect(() => {
+    if (readSkipIntro()) {
+      hasLoaded = true
+      setHeroReady(true)
+      setLoaderDone(true)
+    }
+  }, [])
 
   const handleAvatarLoaded = useCallback(() => {
     loaderResumeRef.current?.()
@@ -72,7 +89,7 @@ export default function Home() {
       {loaderDone && <ScrollGuide />}
       <main>
         <Hero ready={heroReady} onAvatarLoaded={handleAvatarLoaded} />
-        <About />
+        <ExperienceSkills />
         <Projects />
         <Contact />
       </main>
