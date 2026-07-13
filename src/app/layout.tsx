@@ -4,6 +4,7 @@ import SmoothScroll from '@/components/layout/smooth-scroll'
 import Background from '@/components/layout/background'
 import StructuredData from '@/components/seo/structured-data'
 import { Metadata } from 'next'
+import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://diegogabrielrodriguez.com'),
@@ -90,6 +91,7 @@ export default function RootLayout({
           <StructuredData />
         </head>
         <body>
+          <Analytics />
           {/* Bloquea el primer paint hasta que el Loader JS monte — evita flash del hero.
             Solo en el home ('/'): el Loader (que lo remueve) únicamente monta ahí. En rutas
             de detalle (F5 / entrada directa) no hay Loader, así que no instalamos el cover
