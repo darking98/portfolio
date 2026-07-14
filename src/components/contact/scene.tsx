@@ -9,7 +9,7 @@ import { BG, CREAM } from './constants'
 // hasta que la sección se acerca): fuerza la subida de la geometría a GPU y
 // la compilación de shaders durante la carga inicial, tapado por el clip-path.
 // Sin esto, el primer frame real ocurre en mitad del scroll y el reveal
-// muestra un canvas negro mientras la GPU traga los 85MB del avatar.
+// muestra un canvas negro mientras la GPU traga el avatar.
 export function WarmUp() {
   const advance = useThree((s) => s.advance)
   useEffect(() => {

@@ -17,14 +17,14 @@ export function ContactFooter({ winkEyeRef, onWink }: ContactFooterProps) {
   // Escalonado (indentación de Gabriel/Rodriguez). En mobile MUCHO menor: con
   // 18vw/36vw + el nombre grande, "Rodriguez" se escapaba fuera del viewport.
   const indent2 = isMobile ? '10vw' : '18vw'
-  const indent3 = isMobile ? '22vw' : '36vw'
+  const indent3 = isMobile ? '18vw' : '36vw'
   return (
     <div
       className={
         // Mobile: cubre TODO el sticky (inset-0) para poder anclar los links
         // arriba y el nombre abajo (mt-auto). Desktop: solo la franja inferior.
         isMobile
-          ? 'absolute inset-0 z-10 px-8 pb-6 flex flex-col'
+          ? 'absolute inset-0 z-10 px-2 pb-6 flex flex-col'
           : 'absolute bottom-0 inset-x-0 z-10 px-8 md:px-12 pb-6'
       }
     >
